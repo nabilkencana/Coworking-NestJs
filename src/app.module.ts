@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SpacesModule } from './modules/spaces/spaces.module';
 import { DiskonModule } from './modules/diskon/diskon.module';
 import { ReservasiModule } from './modules/reservasi/reservasi.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ReservasiModule } from './modules/reservasi/reservasi.module';
     SpacesModule,
     DiskonModule,
     ReservasiModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
