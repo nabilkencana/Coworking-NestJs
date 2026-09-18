@@ -1,40 +1,28 @@
 {
   "info": {
-    "_postman_id": "ukk-paket-b-coworking-space-2026-2027",
+    "_postman_id": "ukk-paket-b-smart-space-booking-2026-2027",
     "name": "UKK Paket B - Coworking Space API (Smart Space Booking)",
-    "description": "Dokumentasi & API Collection resmi Uji Kompetensi Keahlian (UKK) RPL 2026/2027 - Paket B:\nAplikasi Reservasi Coworking Space & Workstation (Smart Space Booking).\n\nURL API Resmi: https://learn.smktelkom-mlg.sch.id/coworking/\n\nMencakup seluruh 50 endpoint persis sesuai dokumen soal UKK Bagian III (halaman 5 - 37):\n1. Root & Health Check Service (2 endpoint)\n2. Multi-Tenancy Siswa (App Maker) (5 endpoint)\n3. Autentikasi Pengguna (Member & Admin Space) (4 endpoint)\n4. Space Coworking (Katalog & Ketersediaan) (4 endpoint)\n5. Diskon & Promo (Katalog Diskon) (3 endpoint)\n6. Reservasi Member (Pemesanan & Histori) (6 endpoint)\n7. Profil Lokasi Coworking Space (Panel Admin) (2 endpoint)\n8. Manajemen Member / Pelanggan (Panel Admin) (5 endpoint)\n9. Manajemen Space Ruangan & Meja (Panel Admin) (5 endpoint)\n10. Manajemen Kode Promo & Diskon (Panel Admin) (5 endpoint)\n11. Transaksi Reservasi & Check-In/Check-Out (Panel Admin) (4 endpoint)\n12. Rekapitulasi Laporan Pendapatan Bulanan (Panel Admin) (2 endpoint)\n13. Upload Berkas & Gambar (Media) (3 endpoint)\n\nFitur Otomatis:\n- Auto-save token_maker & makerKey setelah Maker Register/Login\n- Auto-save token_member & token_admin setelah User Login/Register\n- Variable dinamis untuk space_id, member_id, diskon_id, reservasi_id\n- Header x-maker-key otomatis terpasang",
+    "description": "Dokumentasi & API Collection resmi Uji Kompetensi Keahlian (UKK) RPL 2026/2027 - Paket B:\nAplikasi Reservasi Coworking Space & Workstation (Smart Space Booking).\n\nBackend: NestJS 11 + Prisma ORM + PostgreSQL (Neon) + JWT Auth + Swagger.\nBase URL: {{baseUrl}} (Default: http://localhost:3000)\n\nSemua endpoint terstruktur mandiri tanpa dependensi panitia (tidak memerlukan header x-maker-key).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://learn.smktelkom-mlg.sch.id/coworking",
+      "value": "http://localhost:3000",
       "type": "string",
-      "description": "Base URL API persis sesuai PDF UKK Paket B"
-    },
-    {
-      "key": "makerKey",
-      "value": "mk_4ffb8c4b40a6499ea7767bfafb32f6e0",
-      "type": "string",
-      "description": "App Key siswa hasil registrasi /api/maker/register (Header: x-maker-key)"
-    },
-    {
-      "key": "token_maker",
-      "value": "",
-      "type": "string",
-      "description": "JWT Bearer Token Siswa (App Maker)"
+      "description": "Base URL server"
     },
     {
       "key": "token_member",
       "value": "",
       "type": "string",
-      "description": "JWT Bearer Token Pengguna Member/Pelanggan"
+      "description": "JWT Bearer Member"
     },
     {
       "key": "token_admin",
       "value": "",
       "type": "string",
-      "description": "JWT Bearer Token Pengelola / Admin Coworking Space"
+      "description": "JWT Bearer Admin"
     },
     {
       "key": "space_id",
@@ -44,21 +32,37 @@
     },
     {
       "key": "member_id",
-      "value": "6",
+      "value": "1",
       "type": "string",
-      "description": "ID Member / Pelanggan"
+      "description": "ID Member"
     },
     {
       "key": "diskon_id",
       "value": "1",
       "type": "string",
-      "description": "ID Kode Promo / Diskon"
+      "description": "ID Kode Promo"
     },
     {
       "key": "reservasi_id",
-      "value": "12",
+      "value": "1",
       "type": "string",
-      "description": "ID Transaksi Reservasi"
+      "description": "ID Reservasi"
+    },
+    {
+      "key": "cancel_reservasi_id",
+      "value": "1",
+      "type": "string",
+      "description": "ID Reservasi untuk Dibatalkan"
+    },
+    {
+      "key": "booking_date",
+      "value": "2028-05-15",
+      "type": "string"
+    },
+    {
+      "key": "booking_hour",
+      "value": "10:00",
+      "type": "string"
     }
   ],
   "item": [
@@ -103,6 +107,19 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"name\": \"Coworking Space Backend API - UKK RPL Paket B\",\n    \"version\": \"1.0.0\",\n    \"status\": \"online\",\n    \"swagger_docs\": \"/docs\",\n    \"description\": \"Backend service untuk menunjang kelas frontend dalam ujian UKK dengan multi-tenancy App Maker.\",\n    \"documentation_links\": {\n      \"swagger\": \"http://localhost:3000/docs\",\n      \"swagger_json\": \"http://localhost:3000/docs-json\"\n    }\n  },\n  \"timestamp\": \"2026-08-27T08:34:46.977Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"1. GET / - Status API & Petunjuk Penggunaan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
@@ -144,342 +161,43 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"status\": \"ok\",\n    \"timestamp\": \"2026-08-27T08:34:46.981Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:34:46.981Z\"\n}"
             }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "02. Multi-Tenancy Siswa (App Maker)",
-      "description": "Registrasi & otentikasi akun siswa pengembang (App Maker) untuk mendapatkan app_key isolasi multi-tenancy",
-      "item": [
-        {
-          "name": "3. POST /api/maker/register - Registrasi Akun Siswa (App Maker)",
+          ],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    var res = pm.response.json();",
-                  "    if (res.data && res.data.access_token) {",
-                  "        pm.collectionVariables.set(\"token_maker\", res.data.access_token);",
-                  "        console.log(\"token_maker updated:\", res.data.access_token);",
-                  "    }",
-                  "    if (res.data && res.data.app_key) {",
-                  "        pm.collectionVariables.set(\"makerKey\", res.data.app_key);",
-                  "        console.log(\"makerKey updated:\", res.data.app_key);",
-                  "    }",
-                  "}"
+                  "pm.test(\"2. GET /health - Health Check Server - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
                 ]
               }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Budi Santoso\",\n  \"username\": \"budisantoso\",\n  \"email\": \"budi@smk.sch.id\",\n  \"password\": \"Password123!\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/maker/register",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "maker",
-                "register"
-              ]
-            },
-            "description": "Publik: Registrasi Akun Siswa untuk mendapatkan App Key unik (mk_xxxxxxxxxxxx).\nAuth: Tidak diperlukan (Publik)"
-          },
-          "response": [
-            {
-              "name": "201 Created - Berhasil Register App Maker",
-              "status": "Created",
-              "code": 201,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"status\": true,\n  \"statusCode\": 201,\n  \"message\": \"Registrasi App Maker berhasil! Simpan app_key Anda dengan baik.\",\n  \"data\": {\n    \"id\": 5,\n    \"name\": \"Budi Santoso\",\n    \"username\": \"budisantoso\",\n    \"email\": \"budi@smk.sch.id\",\n    \"app_key\": \"mk_4ffb8c4b40a6499ea7767bfafb32f6e0\",\n    \"created_at\": \"2026-08-27T02:58:34.092Z\",\n    \"updated_at\": \"2026-08-27T02:58:34.092Z\",\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  },\n  \"timestamp\": \"2026-08-27T02:58:34.095Z\"\n}"
-            },
-            {
-              "name": "400 Bad Request - Username/Email Duplikat",
-              "status": "Bad Request",
-              "code": 400,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"status\": false,\n  \"statusCode\": 400,\n  \"message\": \"Username atau Email sudah terdaftar sebagai App Maker!\",\n  \"error\": \"Bad Request\",\n  \"timestamp\": \"2026-08-27T02:58:34.096Z\"\n}"
-            }
-          ]
-        },
-        {
-          "name": "4. POST /api/maker/login - Login Siswa Pengembang Frontend",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "if (pm.response.code === 200 || pm.response.code === 201) {",
-                  "    var res = pm.response.json();",
-                  "    if (res.data && res.data.access_token) {",
-                  "        pm.collectionVariables.set(\"token_maker\", res.data.access_token);",
-                  "        console.log(\"token_maker updated:\", res.data.access_token);",
-                  "    }",
-                  "    if (res.data && res.data.app_key) {",
-                  "        pm.collectionVariables.set(\"makerKey\", res.data.app_key);",
-                  "        console.log(\"makerKey updated:\", res.data.app_key);",
-                  "    }",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"usernameOrEmail\": \"budisantoso\",\n  \"password\": \"Password123!\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/maker/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "maker",
-                "login"
-              ]
-            },
-            "description": "Publik: Login Akun Siswa Pengembang Frontend.\nAuth: Tidak diperlukan (Publik)"
-          },
-          "response": [
-            {
-              "name": "200 Success - Login Berhasil",
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Login App Maker berhasil!\",\n  \"data\": {\n    \"id\": 5,\n    \"name\": \"Budi Santoso\",\n    \"username\": \"budisantoso\",\n    \"email\": \"budi@smk.sch.id\",\n    \"app_key\": \"mk_4ffb8c4b40a6499ea7767bfafb32f6e0\",\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  },\n  \"timestamp\": \"2026-08-27T08:34:54.036Z\"\n}"
-            },
-            {
-              "name": "401 Unauthorized - Kredensial Salah",
-              "status": "Unauthorized",
-              "code": 401,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"status\": false,\n  \"statusCode\": 401,\n  \"message\": \"Kredensial login App Maker salah!\",\n  \"error\": \"Unauthorized\",\n  \"timestamp\": \"2026-08-27T08:34:54.038Z\"\n}"
-            }
-          ]
-        },
-        {
-          "name": "5. GET /api/maker/me - Lihat Profil & App Key Siswa Saat Ini",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token_maker}}",
-                "description": "Token JWT App Maker"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/maker/me",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "maker",
-                "me"
-              ]
-            },
-            "description": "App Maker: Lihat Profil & App Key Siswa Saat Ini\nAuth: Bearer Token App Maker"
-          },
-          "response": [
-            {
-              "name": "200 Success - Profil Maker",
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 5,\n    \"name\": \"Budi Santoso\",\n    \"username\": \"budisantoso\",\n    \"email\": \"budi@smk.sch.id\",\n    \"app_key\": \"mk_4ffb8c4b40a6499ea7767bfafb32f6e0\",\n    \"created_at\": \"2026-08-27T02:58:34.092Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:35:00.120Z\"\n}"
-            }
-          ]
-        },
-        {
-          "name": "6. GET /api/maker/stats - Statistik Keseluruhan Data Siswa",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token_maker}}",
-                "description": "Token JWT App Maker"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/maker/stats",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "maker",
-                "stats"
-              ]
-            },
-            "description": "App Maker: Statistik Keseluruhan Data Siswa (Member, Space, Diskon, Reservasi, Pendapatan)\nAuth: Bearer Token App Maker / Header x-maker-key"
-          },
-          "response": [
-            {
-              "name": "200 Success - Statistik Maker",
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"total_members\": 5,\n    \"total_spaces\": 4,\n    \"total_diskon\": 3,\n    \"total_reservasi\": 12,\n    \"total_pendapatan\": 1450000\n  },\n  \"timestamp\": \"2026-08-27T08:35:10.450Z\"\n}"
-            }
-          ]
-        },
-        {
-          "name": "7. GET /api/maker/list - Daftar Semua Siswa / App Maker Terdaftar",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/maker/list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "maker",
-                "list"
-              ]
-            },
-            "description": "Guru/Penguji: Daftar Semua Siswa / App Maker Terdaftar\nAuth: Tidak diperlukan (Publik untuk pengujian panitia)"
-          },
-          "response": [
-            {
-              "name": "200 Success - Daftar Siswa / Maker",
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "json",
-              "header": [
-                {
-                  "key": "Content-Type",
-                  "value": "application/json"
-                }
-              ],
-              "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Admin Default UKK\",\n      \"username\": \"admin_default\",\n      \"email\": \"admin@ukk.sch.id\",\n      \"app_key\": \"mk_default_ukk_2026\",\n      \"created_at\": \"2026-08-27T00:00:00.000Z\"\n    },\n    {\n      \"id\": 5,\n      \"name\": \"Budi Santoso\",\n      \"username\": \"budisantoso\",\n      \"email\": \"budi@smk.sch.id\",\n      \"app_key\": \"mk_4ffb8c4b40a6499ea7767bfafb32f6e0\",\n      \"created_at\": \"2026-08-27T02:58:34.092Z\"\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:35:15.890Z\"\n}"
             }
           ]
         }
       ]
     },
     {
-      "name": "03. Autentikasi Pengguna (Member & Admin Space)",
+      "name": "02. Autentikasi Pengguna (Member & Admin Space)",
       "description": "Registrasi & login untuk role Member (pengunjung) dan Admin Space (pengelola coworking)",
       "item": [
         {
-          "name": "8. POST /api/auth/register/member - Registrasi Akun Member / Pelanggan Baru",
+          "name": "3. POST /api/auth/register/member - Registrasi Akun Member / Pelanggan Baru",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"3. POST /api/auth/register/member - Registrasi Akun Member / Pelanggan Baru - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
                   "if (pm.response.code === 201) {",
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.access_token) {",
                   "        pm.collectionVariables.set(\"token_member\", res.data.access_token);",
-                  "        console.log(\"token_member saved from register:\", res.data.access_token);",
-                  "    }",
-                  "    if (res.data && res.data.member && res.data.member.id) {",
-                  "        pm.collectionVariables.set(\"member_id\", String(res.data.member.id));",
+                  "        if (pm.environment) pm.environment.set(\"token_member\", res.data.access_token);",
                   "    }",
                   "}"
                 ]
@@ -496,16 +214,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"Secret123!\",\n  \"nama_member\": \"John Doe\",\n  \"instansi\": \"Universitas Indonesia / PT Maju Mundur\",\n  \"alamat\": \"Jl. Sudirman No. 123, Jakarta Selatan\",\n  \"telp\": \"081234567890\",\n  \"foto\": \"member_john.jpg\"\n}"
+              "raw": "{\n  \"username\": \"member_{{$timestamp}}\",\n  \"password\": \"Secret123!\",\n  \"nama_member\": \"User Member Test\",\n  \"instansi\": \"SMK Telkom Malang\",\n  \"alamat\": \"Jl. Danau Ranau No. 1, Malang\",\n  \"telp\": \"081234567890\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register/member",
@@ -519,7 +232,7 @@
                 "member"
               ]
             },
-            "description": "Publik: Registrasi Akun Member / Pelanggan Baru\nAuth: Tidak diperlukan (Publik)\nHeader: x-maker-key: mk_xxxxxxxxxxxx"
+            "description": "Publik: Registrasi Akun Member / Pelanggan Baru\nAuth: Tidak diperlukan (Publik)"
           },
           "response": [
             {
@@ -551,18 +264,21 @@
           ]
         },
         {
-          "name": "9. POST /api/auth/register/admin-space - Registrasi Pengelola Lokasi / Admin Coworking",
+          "name": "4. POST /api/auth/register/admin-space - Registrasi Pengelola Lokasi / Admin Coworking",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"4. POST /api/auth/register/admin-space - Registrasi Pengelola Lokasi / Admin Coworking - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
                   "if (pm.response.code === 201) {",
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.access_token) {",
                   "        pm.collectionVariables.set(\"token_admin\", res.data.access_token);",
-                  "        console.log(\"token_admin saved from register:\", res.data.access_token);",
+                  "        if (pm.environment) pm.environment.set(\"token_admin\", res.data.access_token);",
                   "    }",
                   "}"
                 ]
@@ -579,16 +295,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"admin_space1\",\n  \"password\": \"Admin123!\",\n  \"nama_coworking\": \"Moklet Hub Coworking\",\n  \"nama_pemilik\": \"Ahmad Bidin\",\n  \"telp\": \"081298765432\"\n}"
+              "raw": "{\n  \"username\": \"admin_{{$timestamp}}\",\n  \"password\": \"Admin123!\",\n  \"nama_coworking\": \"Moklet Hub Test {{$timestamp}}\",\n  \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n  \"telp\": \"081298765432\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register/admin-space",
@@ -602,7 +313,7 @@
                 "admin-space"
               ]
             },
-            "description": "Publik: Registrasi Pengelola Lokasi / Admin Coworking Space\nAuth: Tidak diperlukan (Publik)\nHeader: x-maker-key: mk_xxxxxxxxxxxx"
+            "description": "Publik: Registrasi Pengelola Lokasi / Admin Coworking Space\nAuth: Tidak diperlukan (Publik)"
           },
           "response": [
             {
@@ -621,23 +332,25 @@
           ]
         },
         {
-          "name": "10. POST /api/auth/login - Login Akun Pengguna (Member atau Admin Space)",
+          "name": "5. POST /api/auth/login (Member) - Login Akun Member / Pelanggan",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"5. POST /api/auth/login (Member) - Login Akun Member / Pelanggan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
                   "if (pm.response.code === 200) {",
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.access_token) {",
-                  "        if (res.data.role === 'admin_space') {",
-                  "            pm.collectionVariables.set(\"token_admin\", res.data.access_token);",
-                  "            console.log(\"token_admin saved:\", res.data.access_token);",
-                  "        } else {",
-                  "            pm.collectionVariables.set(\"token_member\", res.data.access_token);",
-                  "            console.log(\"token_member saved:\", res.data.access_token);",
-                  "        }",
+                  "        pm.collectionVariables.set(\"token_member\", res.data.access_token);",
+                  "        if (pm.environment) pm.environment.set(\"token_member\", res.data.access_token);",
+                  "    }",
+                  "    if (res.data && res.data.member && res.data.member.id) {",
+                  "        pm.collectionVariables.set(\"member_id\", String(res.data.member.id));",
+                  "        if (pm.environment) pm.environment.set(\"member_id\", String(res.data.member.id));",
                   "    }",
                   "}"
                 ]
@@ -654,11 +367,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "body": {
@@ -676,7 +384,7 @@
                 "login"
               ]
             },
-            "description": "Publik: Login Akun User (Member atau Admin Space) Mengembalikan JWT Token\nAuth: Tidak diperlukan (Publik)\nHeader: x-maker-key: mk_xxxxxxxxxxxx"
+            "description": "Login sebagai Member / Pelanggan menggunakan kredensial hasil registrasi atau data seed."
           },
           "response": [
             {
@@ -708,7 +416,87 @@
           ]
         },
         {
-          "name": "11. GET /api/auth/profile - Lihat Profil Pengguna yang Sedang Login",
+          "name": "6. POST /api/auth/login (Admin) - Login Pengelola / Admin Coworking Space",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"6. POST /api/auth/login (Admin) - Login Pengelola / Admin Coworking Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.access_token) {",
+                  "        pm.collectionVariables.set(\"token_admin\", res.data.access_token);",
+                  "        if (pm.environment) pm.environment.set(\"token_admin\", res.data.access_token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_space1\",\n  \"password\": \"Admin123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login sebagai Admin Space / Pengelola Coworking menggunakan kredensial admin."
+          },
+          "response": [
+            {
+              "name": "200 Success - Login Berhasil (Member)",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Login berhasil!\",\n  \"data\": {\n    \"id\": 7,\n    \"username\": \"johndoe\",\n    \"role\": \"member\",\n    \"maker_id\": 5,\n    \"member\": {\n      \"id\": 6,\n      \"nama_member\": \"John Doe\",\n      \"instansi\": \"Universitas Indonesia / PT Maju Mundur\",\n      \"alamat\": \"Jl. Sudirman No. 123, Jakarta Selatan\",\n      \"telp\": \"081234567890\",\n      \"foto\": \"1787799592972-544446318.jpeg\"\n    },\n    \"space_owner\": null,\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  },\n  \"timestamp\": \"2026-08-27T08:34:54.264Z\"\n}"
+            },
+            {
+              "name": "401 Unauthorized - Kredensial Salah",
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": false,\n  \"statusCode\": 401,\n  \"message\": \"Username atau Password salah!\",\n  \"error\": \"Unauthorized\",\n  \"timestamp\": \"2026-08-27T08:34:54.268Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "7. GET /api/auth/profile - Lihat Profil Pengguna yang Sedang Login",
           "request": {
             "method": "GET",
             "header": [
@@ -719,11 +507,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               },
               {
                 "key": "Authorization",
@@ -758,16 +541,86 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 7,\n    \"username\": \"johndoe\",\n    \"role\": \"member\",\n    \"member\": {\n      \"id\": 6,\n      \"nama_member\": \"John Doe\",\n      \"instansi\": \"Universitas Indonesia / PT Maju Mundur\",\n      \"alamat\": \"Jl. Sudirman No. 123, Jakarta Selatan\",\n      \"telp\": \"081234567890\",\n      \"foto\": \"1787799592972-544446318.jpeg\"\n    }\n  },\n  \"timestamp\": \"2026-08-27T08:35:20.100Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"7. GET /api/auth/profile - Lihat Profil Pengguna yang Sedang Login - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. POST /api/auth/logout - Logout Akun Pengguna",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"8. POST /api/auth/logout - Logout Akun Pengguna - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_member}}",
+                "description": "Token JWT Member"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logout akun pengguna yang sedang terautentikasi."
+          },
+          "response": [
+            {
+              "name": "200 OK - Logout Berhasil",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Logout berhasil!\",\n  \"data\": null,\n  \"timestamp\": \"2026-08-30T00:00:00.000Z\"\n}"
+            }
           ]
         }
       ]
     },
     {
-      "name": "04. Space Coworking (Katalog & Ketersediaan)",
+      "name": "03. Space Coworking (Katalog & Ketersediaan)",
       "description": "Katalog publik ruangan & meja kerja coworking (Personal Desk, Meeting Room, Private Office) serta pengecekan ketersediaan",
       "item": [
         {
-          "name": "12. GET /api/spaces/types - Daftar Tipe Space",
+          "name": "9. GET /api/spaces/types - Daftar Tipe Space",
           "request": {
             "method": "GET",
             "header": [
@@ -778,11 +631,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "url": {
@@ -812,10 +660,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"tipe\": \"desk\",\n      \"label\": \"Personal Desk\",\n      \"deskripsi\": \"Meja kerja individual yang nyaman dengan fasilitas colokan listrik, WiFi kencang, dan air minum.\"\n    },\n    {\n      \"tipe\": \"meeting_room\",\n      \"label\": \"Meeting Room\",\n      \"deskripsi\": \"Ruang rapat tertutup dengan fasilitas proyektor/TV LED, whiteboard, sound system, dan AC dingin.\"\n    },\n    {\n      \"tipe\": \"private_office\",\n      \"label\": \"Private Office\",\n      \"deskripsi\": \"Ruang kantor privat eksklusif untuk tim kecil hingga menengah dengan akses fleksibel dan keamanan 24 jam.\"\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:34:46.984Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"9. GET /api/spaces/types - Daftar Tipe Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "13. GET /api/spaces/availability - Cek Ketersediaan Space",
+          "name": "10. GET /api/spaces/availability - Cek Ketersediaan Space",
           "request": {
             "method": "GET",
             "header": [
@@ -826,15 +687,10 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/spaces/availability?id_space=1&tanggal=2026-08-30&jam_mulai=09:00&durasi_jam=3",
+              "raw": "{{baseUrl}}/api/spaces/availability?id_space={{space_id}}&tanggal=2029-01-01&jam_mulai=10:00&durasi_jam=2",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -846,23 +702,19 @@
               "query": [
                 {
                   "key": "id_space",
-                  "value": "1",
-                  "description": "ID Space yang ingin dicek"
+                  "value": "{{space_id}}"
                 },
                 {
                   "key": "tanggal",
-                  "value": "2026-08-30",
-                  "description": "Tanggal sewa format YYYY-MM-DD"
+                  "value": "2029-01-01"
                 },
                 {
                   "key": "jam_mulai",
-                  "value": "09:00",
-                  "description": "Jam mulai format HH:mm 24-jam"
+                  "value": "10:00"
                 },
                 {
                   "key": "durasi_jam",
-                  "value": "3",
-                  "description": "Durasi jam sewa"
+                  "value": "2"
                 }
               ]
             },
@@ -895,10 +747,23 @@
               ],
               "body": "{\n  \"status\": false,\n  \"statusCode\": 400,\n  \"message\": \"Maaf, space sudah terisi atau dibooking pada jam tersebut!\",\n  \"error\": \"Bad Request\",\n  \"timestamp\": \"2026-08-27T08:35:30.125Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"10. GET /api/spaces/availability - Cek Ketersediaan Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "14. GET /api/spaces - Lihat Semua Space Coworking (Katalog)",
+          "name": "11. GET /api/spaces - Lihat Semua Space Coworking (Katalog)",
           "request": {
             "method": "GET",
             "header": [
@@ -909,11 +774,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "url": {
@@ -954,10 +814,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"nama_space\": \"Personal Desk - Flexi 01\",\n      \"harga_per_jam\": 20000,\n      \"tipe\": \"desk\",\n      \"kapasitas\": 1,\n      \"foto\": \"desk_flexi_01.jpg\",\n      \"deskripsi\": \"Meja kerja individual yang tenang dan nyaman dengan colokan listrik, WiFi kencang 100Mbps, lampu meja LED, dan free refill air mineral.\",\n      \"id_owner\": 1,\n      \"owner\": {\n        \"nama_coworking\": \"Moklet Hub Coworking Space\",\n        \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n        \"telp\": \"081298765432\"\n      },\n      \"foto_url\": \"http://localhost:3000/uploads/spaces/desk_flexi_01.jpg\"\n    },\n    {\n      \"id\": 3,\n      \"nama_space\": \"Meeting Room Alpha\",\n      \"harga_per_jam\": 100000,\n      \"tipe\": \"meeting_room\",\n      \"kapasitas\": 8,\n      \"foto\": \"meeting_room_alpha.jpg\",\n      \"deskripsi\": \"Ruang rapat kedap suara berkapasitas 8 orang, dilengkapi Smart TV 55 inch, soundbar Bluetooth, whiteboard kaca, AC dingin, dan conference speaker.\",\n      \"id_owner\": 1,\n      \"owner\": {\n        \"nama_coworking\": \"Moklet Hub Coworking Space\",\n        \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n        \"telp\": \"081298765432\"\n      },\n      \"foto_url\": \"http://localhost:3000/uploads/spaces/meeting_room_alpha.jpg\"\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:34:47.035Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"11. GET /api/spaces - Lihat Semua Space Coworking (Katalog) - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "15. GET /api/spaces/{id} - Lihat Detail Space Berdasarkan ID",
+          "name": "12. GET /api/spaces/{id} - Lihat Detail Space Berdasarkan ID",
           "request": {
             "method": "GET",
             "header": [
@@ -968,11 +841,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "url": {
@@ -988,7 +856,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "3",
+                  "value": "{{space_id}}",
                   "description": "ID unik space/meja/ruangan"
                 }
               ]
@@ -1022,16 +890,29 @@
               ],
               "body": "{\n  \"status\": false,\n  \"statusCode\": 404,\n  \"message\": \"Space dengan ID tersebut tidak ditemukan!\",\n  \"error\": \"Not Found\",\n  \"timestamp\": \"2026-08-27T08:35:40.505Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"12. GET /api/spaces/{id} - Lihat Detail Space Berdasarkan ID - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "05. Diskon & Promo (Katalog Diskon)",
+      "name": "04. Diskon & Promo (Katalog Diskon)",
       "description": "Katalog promo diskon aktif dan verifikasi perhitungan kode kupon promo",
       "item": [
         {
-          "name": "16. GET /api/diskon/active - Daftar Promo / Diskon yang Sedang Aktif",
+          "name": "13. GET /api/diskon/active - Daftar Promo / Diskon yang Sedang Aktif",
           "request": {
             "method": "GET",
             "header": [
@@ -1042,11 +923,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "url": {
@@ -1076,10 +952,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"nama_diskon\": \"DISKONHEMAT20\",\n      \"persentase_diskon\": 20,\n      \"tanggal_awal\": \"2026-01-01T00:00:00.000Z\",\n      \"tanggal_akhir\": \"2026-12-31T23:59:59.000Z\"\n    },\n    {\n      \"id\": 2,\n      \"nama_diskon\": \"UKKPROMO50\",\n      \"persentase_diskon\": 50,\n      \"tanggal_awal\": \"2026-08-01T00:00:00.000Z\",\n      \"tanggal_akhir\": \"2026-09-30T23:59:59.000Z\"\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:34:47.061Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"13. GET /api/diskon/active - Daftar Promo / Diskon yang Sedang Aktif - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "17. POST /api/diskon/check - Periksa Validitas & Hitung Kode Promo",
+          "name": "14. POST /api/diskon/check - Periksa Validitas & Hitung Kode Promo",
           "request": {
             "method": "POST",
             "header": [
@@ -1090,11 +979,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "body": {
@@ -1141,10 +1025,23 @@
               ],
               "body": "{\n  \"status\": false,\n  \"statusCode\": 400,\n  \"message\": \"Kode promo tidak ditemukan atau sudah kedaluwarsa!\",\n  \"error\": \"Bad Request\",\n  \"timestamp\": \"2026-08-27T08:35:50.215Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"14. POST /api/diskon/check - Periksa Validitas & Hitung Kode Promo - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "18. GET /api/diskon/{id} - Lihat Detail Diskon Berdasarkan ID",
+          "name": "15. GET /api/diskon/{id} - Lihat Detail Diskon Berdasarkan ID",
           "request": {
             "method": "GET",
             "header": [
@@ -1155,11 +1052,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "url": {
@@ -1175,7 +1067,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "1",
+                  "value": "{{diskon_id}}",
                   "description": "ID promo diskon"
                 }
               ]
@@ -1196,28 +1088,63 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 1,\n    \"nama_diskon\": \"DISKONHEMAT20\",\n    \"persentase_diskon\": 20,\n    \"tanggal_awal\": \"2026-01-01T00:00:00.000Z\",\n    \"tanggal_akhir\": \"2026-12-31T23:59:59.000Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:35:55.700Z\"\n}"
             }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "06. Reservasi Member (Pemesanan & Histori)",
-      "description": "Fitur member untuk booking space, melihat status pesanan, histori per bulan, cetak e-ticket nota, dan pembatalan pesanan",
-      "item": [
-        {
-          "name": "19. POST /api/reservasi - Buat Pemesanan Space Baru (Member)",
+          ],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"15. GET /api/diskon/{id} - Lihat Detail Diskon Berdasarkan ID - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05. Reservasi Member (Pemesanan & Histori)",
+      "description": "Fitur member untuk booking space, melihat status pesanan, histori per bulan, cetak e-ticket nota, dan pembatalan pesanan",
+      "item": [
+        {
+          "name": "16. POST /api/reservasi - Buat Pemesanan Space Baru (Member)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"16. POST /api/reservasi - Buat Pemesanan Space Baru (Member) - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
                   "if (pm.response.code === 201) {",
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"reservasi_id\", String(res.data.id));",
-                  "        console.log(\"reservasi_id saved:\", res.data.id);",
+                  "        if (pm.environment) pm.environment.set(\"reservasi_id\", String(res.data.id));",
                   "    }",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var randDay = String(Math.floor(Math.random() * 25) + 1).padStart(2, \"0\");",
+                  "var randMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, \"0\");",
+                  "var randHour = String(Math.floor(Math.random() * 10) + 8).padStart(2, \"0\");",
+                  "var dateStr = \"2028-\" + randMonth + \"-\" + randDay;",
+                  "var timeStr = randHour + \":00\";",
+                  "pm.collectionVariables.set(\"booking_date\", dateStr);",
+                  "pm.collectionVariables.set(\"booking_hour\", timeStr);",
+                  "if (pm.environment) {",
+                  "    pm.environment.set(\"booking_date\", dateStr);",
+                  "    pm.environment.set(\"booking_hour\", timeStr);",
                   "}"
                 ]
               }
@@ -1235,11 +1162,6 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_member}}",
                 "description": "Token JWT Member"
@@ -1247,7 +1169,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id_space\": 1,\n  \"tanggal_reservasi\": \"2026-08-30\",\n  \"jam_mulai\": \"09:00\",\n  \"durasi_jam\": 3,\n  \"id_diskon\": 1,\n  \"kode_promo\": \"DISKONHEMAT20\"\n}"
+              "raw": "{\n  \"id_space\": 1,\n  \"tanggal_reservasi\": \"{{booking_date}}\",\n  \"jam_mulai\": \"{{booking_hour}}\",\n  \"durasi_jam\": 2,\n  \"id_diskon\": 1\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/reservasi",
@@ -1291,7 +1213,7 @@
           ]
         },
         {
-          "name": "20. GET /api/reservasi/my - Lihat Status Semua Pemesanan Saya (Member)",
+          "name": "17. GET /api/reservasi/my - Lihat Status Semua Pemesanan Saya (Member)",
           "request": {
             "method": "GET",
             "header": [
@@ -1302,11 +1224,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               },
               {
                 "key": "Authorization",
@@ -1341,10 +1258,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 12,\n      \"kode_booking\": \"BOOK-20260830-0012\",\n      \"tanggal_reservasi\": \"2026-08-30\",\n      \"jam_mulai\": \"09:00\",\n      \"jam_selesai\": \"12:00\",\n      \"durasi_jam\": 3,\n      \"total_bayar\": 48000,\n      \"status\": \"disetujui\",\n      \"space\": {\n        \"id\": 1,\n        \"nama_space\": \"Personal Desk - Flexi 01\",\n        \"tipe\": \"desk\"\n      }\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:36:10.120Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"17. GET /api/reservasi/my - Lihat Status Semua Pemesanan Saya (Member) - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "21. GET /api/reservasi/my/history - Lihat Histori Pemesanan Berdasarkan Bulan & Tahun",
+          "name": "18. GET /api/reservasi/my/history - Lihat Histori Pemesanan Berdasarkan Bulan & Tahun",
           "request": {
             "method": "GET",
             "header": [
@@ -1355,11 +1285,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               },
               {
                 "key": "Authorization",
@@ -1407,10 +1332,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"month\": 8,\n    \"year\": 2026,\n    \"total_reservasi\": 3,\n    \"total_pengeluaran\": 150000,\n    \"items\": [\n      {\n        \"id\": 12,\n        \"kode_booking\": \"BOOK-20260830-0012\",\n        \"tanggal_reservasi\": \"2026-08-30\",\n        \"jam_mulai\": \"09:00\",\n        \"jam_selesai\": \"12:00\",\n        \"durasi_jam\": 3,\n        \"total_bayar\": 48000,\n        \"status\": \"selesai\",\n        \"space_name\": \"Personal Desk - Flexi 01\"\n      }\n    ]\n  },\n  \"timestamp\": \"2026-08-27T08:36:20.300Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"18. GET /api/reservasi/my/history - Lihat Histori Pemesanan Berdasarkan Bulan & Tahun - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "22. GET /api/reservasi/{id}/e-ticket - Cetak E-Ticket / Bukti Nota Digital Reservasi",
+          "name": "19. GET /api/reservasi/{id}/e-ticket - Cetak E-Ticket / Bukti Nota Digital Reservasi",
           "request": {
             "method": "GET",
             "header": [
@@ -1421,11 +1359,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               },
               {
                 "key": "Authorization",
@@ -1447,7 +1380,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "12",
+                  "value": "{{reservasi_id}}",
                   "description": "ID unik reservasi pemesanan"
                 }
               ]
@@ -1468,10 +1401,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"E-Ticket berhasil dimuat\",\n  \"data\": {\n    \"e_ticket_number\": \"TICKET-MOKLET-20260830-0012\",\n    \"kode_booking\": \"BOOK-20260830-0012\",\n    \"coworking_space\": {\n      \"nama\": \"Moklet Hub Coworking Space\",\n      \"telepon\": \"081298765432\"\n    },\n    \"member\": {\n      \"nama\": \"John Doe\",\n      \"instansi\": \"Universitas Indonesia / PT Maju Mundur\",\n      \"telp\": \"081234567890\"\n    },\n    \"space\": {\n      \"nama\": \"Personal Desk - Flexi 01\",\n      \"tipe\": \"Personal Desk\",\n      \"harga_per_jam\": 20000\n    },\n    \"jadwal\": {\n      \"tanggal\": \"2026-08-30\",\n      \"jam_mulai\": \"09:00\",\n      \"jam_selesai\": \"12:00\",\n      \"durasi\": \"3 Jam\"\n    },\n    \"rincian_pembayaran\": {\n      \"tarif_kotor\": 60000,\n      \"diskon_promo\": \"20% (DISKONHEMAT20)\",\n      \"potongan\": 12000,\n      \"total_dibayar\": 48000\n    },\n    \"status_reservasi\": \"disetujui\",\n    \"qr_code_payload\": \"VERIFY-RESERVASI-12-mk_4ffb8c4b40a6499ea7767bfafb32f6e0\"\n  },\n  \"timestamp\": \"2026-08-27T08:36:30.450Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"19. GET /api/reservasi/{id}/e-ticket - Cetak E-Ticket / Bukti Nota Digital Reservasi - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "23. GET /api/reservasi/{id} - Lihat Detail Reservasi Berdasarkan ID",
+          "name": "20. GET /api/reservasi/{id} - Lihat Detail Reservasi Berdasarkan ID",
           "request": {
             "method": "GET",
             "header": [
@@ -1482,11 +1428,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               },
               {
                 "key": "Authorization",
@@ -1507,7 +1448,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "12",
+                  "value": "{{reservasi_id}}",
                   "description": "ID reservasi pemesanan"
                 }
               ]
@@ -1528,12 +1469,64 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 12,\n    \"kode_booking\": \"BOOK-20260830-0012\",\n    \"id_member\": 6,\n    \"id_space\": 1,\n    \"tanggal_reservasi\": \"2026-08-30\",\n    \"jam_mulai\": \"09:00\",\n    \"jam_selesai\": \"12:00\",\n    \"durasi_jam\": 3,\n    \"total_bayar\": 48000,\n    \"status\": \"disetujui\",\n    \"member\": {\n      \"nama_member\": \"John Doe\",\n      \"telp\": \"081234567890\"\n    },\n    \"space\": {\n      \"nama_space\": \"Personal Desk - Flexi 01\",\n      \"harga_per_jam\": 20000\n    }\n  },\n  \"timestamp\": \"2026-08-27T08:36:35.100Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"20. GET /api/reservasi/{id} - Lihat Detail Reservasi Berdasarkan ID - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "24. PATCH /api/reservasi/{id}/cancel - Batalkan Pemesanan (Member)",
+          "name": "21. POST /api/reservasi (Pemesanan untuk Dibatalkan) - Buat Reservasi Khusus Uji Pembatalan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    if (res.data && res.data.id) {",
+                  "        pm.collectionVariables.set(\"cancel_reservasi_id\", String(res.data.id));",
+                  "        if (pm.environment) pm.environment.set(\"cancel_reservasi_id\", String(res.data.id));",
+                  "    }",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var randDay = String(Math.floor(Math.random() * 25) + 1).padStart(2, \"0\");",
+                  "var randMonth = String(Math.floor(Math.random() * 12) + 1).padStart(2, \"0\");",
+                  "var randHour = String(Math.floor(Math.random() * 10) + 8).padStart(2, \"0\");",
+                  "var dateStr = \"2029-\" + randMonth + \"-\" + randDay;",
+                  "var timeStr = randHour + \":00\";",
+                  "pm.collectionVariables.set(\"cancel_booking_date\", dateStr);",
+                  "pm.collectionVariables.set(\"cancel_booking_hour\", timeStr);",
+                  "if (pm.environment) {",
+                  "    pm.environment.set(\"cancel_booking_date\", dateStr);",
+                  "    pm.environment.set(\"cancel_booking_hour\", timeStr);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
-            "method": "PATCH",
+            "method": "POST",
             "header": [
               {
                 "key": "Accept",
@@ -1544,9 +1537,41 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
+                "key": "Authorization",
+                "value": "Bearer {{token_member}}",
+                "description": "Token JWT Member"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_space\": 1,\n  \"tanggal_reservasi\": \"{{cancel_booking_date}}\",\n  \"jam_mulai\": \"{{cancel_booking_hour}}\",\n  \"durasi_jam\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reservasi",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservasi"
+              ]
+            },
+            "description": "Membuat reservasi terpisah yang nantinya langsung dibatalkan pada endpoint cancel reservasi."
+          },
+          "response": []
+        },
+        {
+          "name": "22. PATCH /api/reservasi/{id}/cancel - Batalkan Pemesanan (Member)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
               },
               {
                 "key": "Authorization",
@@ -1568,8 +1593,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "12",
-                  "description": "ID reservasi yang ingin dibatalkan"
+                  "value": "{{cancel_reservasi_id}}"
                 }
               ]
             },
@@ -1589,16 +1613,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Reservasi berhasil dibatalkan oleh pengguna\",\n  \"data\": {\n    \"id\": 12,\n    \"status\": \"dibatalkan\",\n    \"updated_at\": \"2026-08-27T08:36:40.000Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:36:40.050Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"21. PATCH /api/reservasi/{id}/cancel - Batalkan Pemesanan (Member) - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "07. Profil Lokasi Coworking Space (Panel Admin)",
+      "name": "06. Profil Lokasi Coworking Space (Panel Admin)",
       "description": "Melihat dan memperbarui profil lokasi coworking space (nama space, pemilik, alamat, telepon)",
       "item": [
         {
-          "name": "25. GET /api/admin/profile - Lihat Profil Lokasi Coworking Space",
+          "name": "23. GET /api/admin/profile - Lihat Profil Lokasi Coworking Space",
           "request": {
             "method": "GET",
             "header": [
@@ -1611,14 +1648,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -1648,10 +1680,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 1,\n    \"nama_coworking\": \"Moklet Hub Coworking Space\",\n    \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n    \"telp\": \"081298765432\"\n  },\n  \"timestamp\": \"2026-08-27T08:36:50.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"22. GET /api/admin/profile - Lihat Profil Lokasi Coworking Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "26. PUT /api/admin/profile - Update Data Profil Lokasi Coworking Space",
+          "name": "24. PUT /api/admin/profile - Update Data Profil Lokasi Coworking Space",
           "request": {
             "method": "PUT",
             "header": [
@@ -1664,19 +1709,14 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nama_coworking\": \"Moklet Hub Coworking Space (Updated)\",\n  \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n  \"telp\": \"081298765432\"\n}"
+              "raw": "{\n  \"nama_coworking\": \"Moklet Hub Coworking Space (Updated)\",\n  \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n  \"telp\": \"081298765432\",\n  \"alamat\": \"Jl. Danau Ranau No. 1, Sawojajar, Malang\",\n  \"deskripsi\": \"Coworking modern premium updated.\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/profile",
@@ -1705,16 +1745,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Profil Coworking Space berhasil diperbarui!\",\n  \"data\": {\n    \"id\": 1,\n    \"nama_coworking\": \"Moklet Hub Coworking Space (Updated)\",\n    \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n    \"telp\": \"081298765432\"\n  },\n  \"timestamp\": \"2026-08-27T08:36:55.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"23. PUT /api/admin/profile - Update Data Profil Lokasi Coworking Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "08. Manajemen Member / Pelanggan (Panel Admin)",
+      "name": "07. Manajemen Member / Pelanggan (Panel Admin)",
       "description": "Operasi CRUD data member/pelanggan coworking oleh Admin Space",
       "item": [
         {
-          "name": "27. GET /api/admin/members - Daftar Semua Member / Pelanggan Coworking",
+          "name": "25. GET /api/admin/members - Daftar Semua Member / Pelanggan Coworking",
           "request": {
             "method": "GET",
             "header": [
@@ -1727,14 +1780,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -1771,21 +1819,37 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"nama_member\": \"Budi Raharjo\",\n      \"instansi\": \"SMK Telkom Malang\",\n      \"alamat\": \"Jl. Danau Ranau No. 1, Sawojajar, Malang\",\n      \"telp\": \"085712345678\",\n      \"foto\": \"budi.jpg\",\n      \"created_at\": \"2026-08-27T00:00:00.000Z\"\n    },\n    {\n      \"id\": 6,\n      \"nama_member\": \"John Doe\",\n      \"instansi\": \"Universitas Indonesia / PT Maju Mundur\",\n      \"alamat\": \"Jl. Sudirman No. 123, Jakarta Selatan\",\n      \"telp\": \"081234567890\",\n      \"foto\": \"1787799592972-544446318.jpeg\",\n      \"created_at\": \"2026-08-27T02:59:53.089Z\"\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:37:05.120Z\"\n}"
             }
-          ]
-        },
-        {
-          "name": "28. POST /api/admin/members - Tambah Data Member Baru oleh Admin",
+          ],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"24. GET /api/admin/members - Daftar Semua Member / Pelanggan Coworking - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "26. POST /api/admin/members - Tambah Data Member Baru oleh Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"25. POST /api/admin/members - Tambah Data Member Baru oleh Admin - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
                   "if (pm.response.code === 201) {",
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"member_id\", String(res.data.id));",
-                  "        console.log(\"member_id updated:\", res.data.id);",
+                  "        if (pm.environment) pm.environment.set(\"member_id\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -1804,19 +1868,14 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"user_budi\",\n  \"password\": \"Secret123!\",\n  \"nama_member\": \"Budi Raharjo\",\n  \"instansi\": \"SMK Telkom Malang\",\n  \"alamat\": \"Jl. Danau Ranau No. 1, Sawojajar, Malang\",\n  \"telp\": \"085712345678\",\n  \"foto\": \"budi.jpg\"\n}"
+              "raw": "{\n  \"username\": \"member_adm_{{$timestamp}}\",\n  \"password\": \"Secret123!\",\n  \"nama_member\": \"Budi Raharjo\",\n  \"instansi\": \"SMK Telkom Malang\",\n  \"alamat\": \"Jl. Danau Ranau No. 1, Malang\",\n  \"telp\": \"085712345678\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/members",
@@ -1848,7 +1907,7 @@
           ]
         },
         {
-          "name": "29. GET /api/admin/members/{id} - Detail Data Member Berdasarkan ID",
+          "name": "27. GET /api/admin/members/{id} - Detail Data Member Berdasarkan ID",
           "request": {
             "method": "GET",
             "header": [
@@ -1861,14 +1920,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -1885,7 +1939,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "6",
+                  "value": "{{member_id}}",
                   "description": "ID unik member"
                 }
               ]
@@ -1906,10 +1960,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 6,\n    \"nama_member\": \"John Doe\",\n    \"instansi\": \"Universitas Indonesia / PT Maju Mundur\",\n    \"alamat\": \"Jl. Sudirman No. 123, Jakarta Selatan\",\n    \"telp\": \"081234567890\",\n    \"foto\": \"1787799592972-544446318.jpeg\"\n  },\n  \"timestamp\": \"2026-08-27T08:37:15.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"26. GET /api/admin/members/{id} - Detail Data Member Berdasarkan ID - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "30. PUT /api/admin/members/{id} - Update Data Member / Pelanggan",
+          "name": "28. PUT /api/admin/members/{id} - Update Data Member / Pelanggan",
           "request": {
             "method": "PUT",
             "header": [
@@ -1922,14 +1989,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
@@ -1950,7 +2012,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "6",
+                  "value": "{{member_id}}",
                   "description": "ID unik member yang akan diperbarui"
                 }
               ]
@@ -1971,10 +2033,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Data member berhasil diperbarui!\",\n  \"data\": {\n    \"id\": 6,\n    \"nama_member\": \"John Doe, S.Kom\",\n    \"instansi\": \"PT Inovasi Digital\",\n    \"alamat\": \"Jl. Gatot Subroto No. 45, Jakarta\",\n    \"telp\": \"081234567890\"\n  },\n  \"timestamp\": \"2026-08-27T08:37:20.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"27. PUT /api/admin/members/{id} - Update Data Member / Pelanggan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "31. DELETE /api/admin/members/{id} - Hapus Data Member / Pelanggan",
+          "name": "29. DELETE /api/admin/members/{id} - Hapus Data Member / Pelanggan",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1987,14 +2062,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2011,7 +2081,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "6",
+                  "value": "{{member_id}}",
                   "description": "ID unik member yang akan dihapus"
                 }
               ]
@@ -2032,16 +2102,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Data member berhasil dihapus!\",\n  \"data\": {\n    \"id\": 6,\n    \"deleted\": true\n  },\n  \"timestamp\": \"2026-08-27T08:37:25.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"28. DELETE /api/admin/members/{id} - Hapus Data Member / Pelanggan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "09. Manajemen Space Ruangan & Meja (Panel Admin)",
+      "name": "08. Manajemen Space Ruangan & Meja (Panel Admin)",
       "description": "Operasi CRUD ruangan, meja kerja, kapasitas, fasilitas, dan foto oleh Admin Space",
       "item": [
         {
-          "name": "32. GET /api/admin/spaces - Daftar Semua Ruangan & Meja Milik Admin",
+          "name": "30. GET /api/admin/spaces - Daftar Semua Ruangan & Meja Milik Admin",
           "request": {
             "method": "GET",
             "header": [
@@ -2054,14 +2137,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2091,21 +2169,37 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"nama_space\": \"Personal Desk - Flexi 01\",\n      \"harga_per_jam\": 20000,\n      \"tipe\": \"desk\",\n      \"kapasitas\": 1,\n      \"foto\": \"desk_flexi_01.jpg\",\n      \"foto_url\": \"http://localhost:3000/uploads/spaces/desk_flexi_01.jpg\"\n    },\n    {\n      \"id\": 3,\n      \"nama_space\": \"Meeting Room Alpha\",\n      \"harga_per_jam\": 100000,\n      \"tipe\": \"meeting_room\",\n      \"kapasitas\": 8,\n      \"foto\": \"meeting_room_alpha.jpg\",\n      \"foto_url\": \"http://localhost:3000/uploads/spaces/meeting_room_alpha.jpg\"\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:37:35.000Z\"\n}"
             }
-          ]
-        },
-        {
-          "name": "33. POST /api/admin/spaces - Tambah Ruangan / Meja Space Baru",
+          ],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"29. GET /api/admin/spaces - Daftar Semua Ruangan & Meja Milik Admin - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "31. POST /api/admin/spaces - Tambah Ruangan / Meja Space Baru",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"30. POST /api/admin/spaces - Tambah Ruangan / Meja Space Baru - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
                   "if (pm.response.code === 201) {",
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"space_id\", String(res.data.id));",
-                  "        console.log(\"space_id updated:\", res.data.id);",
+                  "        if (pm.environment) pm.environment.set(\"space_id\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -2124,19 +2218,14 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nama_space\": \"Personal Desk Alpha 01\",\n  \"harga_per_jam\": 25000,\n  \"tipe\": \"desk\",\n  \"kapasitas\": 1,\n  \"deskripsi\": \"Dilengkapi colokan listrik, WiFi 100Mbps, monitor 24 inch, dan free flow kopi/teh.\",\n  \"foto\": \"desk_alpha_01.jpg\"\n}"
+              "raw": "{\n  \"nama_space\": \"Personal Desk Alpha {{$timestamp}}\",\n  \"harga_per_jam\": 25000,\n  \"tipe\": \"desk\",\n  \"kapasitas\": 1,\n  \"deskripsi\": \"Meja kerja dengan colokan listrik dan WiFi 100Mbps.\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/spaces",
@@ -2168,7 +2257,7 @@
           ]
         },
         {
-          "name": "34. GET /api/admin/spaces/{id} - Detail Data Space Berdasarkan ID",
+          "name": "32. GET /api/admin/spaces/{id} - Detail Data Space Berdasarkan ID",
           "request": {
             "method": "GET",
             "header": [
@@ -2181,14 +2270,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2205,7 +2289,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "5",
+                  "value": "{{space_id}}",
                   "description": "ID unik space/ruangan"
                 }
               ]
@@ -2226,10 +2310,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 5,\n    \"nama_space\": \"Personal Desk Alpha 01\",\n    \"harga_per_jam\": 25000,\n    \"tipe\": \"desk\",\n    \"kapasitas\": 1,\n    \"deskripsi\": \"Dilengkapi colokan listrik, WiFi 100Mbps, monitor 24 inch, dan free flow kopi/teh.\",\n    \"foto\": \"desk_alpha_01.jpg\"\n  },\n  \"timestamp\": \"2026-08-27T08:37:45.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"31. GET /api/admin/spaces/{id} - Detail Data Space Berdasarkan ID - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "35. PUT /api/admin/spaces/{id} - Update Data Ruangan & Fasilitas Space",
+          "name": "33. PUT /api/admin/spaces/{id} - Update Data Ruangan & Fasilitas Space",
           "request": {
             "method": "PUT",
             "header": [
@@ -2242,14 +2339,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
@@ -2270,7 +2362,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "5",
+                  "value": "{{space_id}}",
                   "description": "ID unik space yang akan diperbarui"
                 }
               ]
@@ -2291,10 +2383,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Data space berhasil diperbarui!\",\n  \"data\": {\n    \"id\": 5,\n    \"nama_space\": \"Personal Desk Alpha 01 (Updated)\",\n    \"harga_per_jam\": 30000,\n    \"tipe\": \"desk\",\n    \"kapasitas\": 2,\n    \"deskripsi\": \"Fasilitas terupdate dengan monitor 27 inch 4K dan standing desk elektrik.\"\n  },\n  \"timestamp\": \"2026-08-27T08:37:50.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"32. PUT /api/admin/spaces/{id} - Update Data Ruangan & Fasilitas Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "36. DELETE /api/admin/spaces/{id} - Hapus Data Ruangan / Meja Space",
+          "name": "34. DELETE /api/admin/spaces/{id} - Hapus Data Ruangan / Meja Space",
           "request": {
             "method": "DELETE",
             "header": [
@@ -2307,14 +2412,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2331,7 +2431,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "5",
+                  "value": "{{space_id}}",
                   "description": "ID unik space yang akan dihapus"
                 }
               ]
@@ -2352,16 +2452,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Space berhasil dihapus!\",\n  \"data\": {\n    \"id\": 5,\n    \"deleted\": true\n  },\n  \"timestamp\": \"2026-08-27T08:37:55.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"33. DELETE /api/admin/spaces/{id} - Hapus Data Ruangan / Meja Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "10. Manajemen Kode Promo & Diskon (Panel Admin)",
+      "name": "09. Manajemen Kode Promo & Diskon (Panel Admin)",
       "description": "Operasi CRUD kode kupon promosi, persentase diskon, dan masa berlaku oleh Admin Space",
       "item": [
         {
-          "name": "37. GET /api/admin/diskon - Daftar Semua Kode Promo / Diskon Event",
+          "name": "35. GET /api/admin/diskon - Daftar Semua Kode Promo / Diskon Event",
           "request": {
             "method": "GET",
             "header": [
@@ -2374,14 +2487,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2411,21 +2519,37 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"nama_diskon\": \"DISKONHEMAT20\",\n      \"persentase_diskon\": 20,\n      \"tanggal_awal\": \"2026-01-01T00:00:00.000Z\",\n      \"tanggal_akhir\": \"2026-12-31T23:59:59.000Z\"\n    },\n    {\n      \"id\": 2,\n      \"nama_diskon\": \"UKKPROMO50\",\n      \"persentase_diskon\": 50,\n      \"tanggal_awal\": \"2026-08-01T00:00:00.000Z\",\n      \"tanggal_akhir\": \"2026-09-30T23:59:59.000Z\"\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:38:05.000Z\"\n}"
             }
-          ]
-        },
-        {
-          "name": "38. POST /api/admin/diskon - Tambah Kode Promo / Event Diskon Baru",
+          ],
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"34. GET /api/admin/diskon - Daftar Semua Kode Promo / Diskon Event - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "36. POST /api/admin/diskon - Tambah Kode Promo / Event Diskon Baru",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"35. POST /api/admin/diskon - Tambah Kode Promo / Event Diskon Baru - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});",
                   "if (pm.response.code === 201) {",
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"diskon_id\", String(res.data.id));",
-                  "        console.log(\"diskon_id updated:\", res.data.id);",
+                  "        if (pm.environment) pm.environment.set(\"diskon_id\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -2444,19 +2568,14 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nama_diskon\": \"PROMOAGUSTUS\",\n  \"persentase_diskon\": 20,\n  \"tanggal_awal\": \"2026-08-01T00:00:00Z\",\n  \"tanggal_akhir\": \"2026-08-31T23:59:59Z\"\n}"
+              "raw": "{\n  \"nama_diskon\": \"PROMO_{{$timestamp}}\",\n  \"persentase_diskon\": 20,\n  \"tanggal_awal\": \"2027-01-01T00:00:00.000Z\",\n  \"tanggal_akhir\": \"2027-12-31T23:59:59.000Z\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/diskon",
@@ -2488,7 +2607,7 @@
           ]
         },
         {
-          "name": "39. GET /api/admin/diskon/{id} - Detail Data Diskon Berdasarkan ID",
+          "name": "37. GET /api/admin/diskon/{id} - Detail Data Diskon Berdasarkan ID",
           "request": {
             "method": "GET",
             "header": [
@@ -2501,14 +2620,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2525,7 +2639,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "4",
+                  "value": "{{diskon_id}}",
                   "description": "ID unik promo diskon"
                 }
               ]
@@ -2546,10 +2660,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"id\": 4,\n    \"nama_diskon\": \"PROMOAGUSTUS\",\n    \"persentase_diskon\": 20,\n    \"tanggal_awal\": \"2026-08-01T00:00:00.000Z\",\n    \"tanggal_akhir\": \"2026-08-31T23:59:59.000Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:38:15.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"36. GET /api/admin/diskon/{id} - Detail Data Diskon Berdasarkan ID - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "40. PUT /api/admin/diskon/{id} - Update Data Kode Promo & Periode Diskon",
+          "name": "38. PUT /api/admin/diskon/{id} - Update Data Kode Promo & Periode Diskon",
           "request": {
             "method": "PUT",
             "header": [
@@ -2562,19 +2689,14 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nama_diskon\": \"PROMOAGUSTUS2026\",\n  \"persentase_diskon\": 25,\n  \"tanggal_akhir\": \"2026-09-15T23:59:59Z\"\n}"
+              "raw": "{\n  \"nama_diskon\": \"PROMO_{{$timestamp}}_UPDATED\",\n  \"persentase_diskon\": 25,\n  \"tanggal_akhir\": \"2027-12-31T23:59:59.000Z\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/admin/diskon/:id",
@@ -2590,7 +2712,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "4",
+                  "value": "{{diskon_id}}",
                   "description": "ID unik promo diskon yang akan diperbarui"
                 }
               ]
@@ -2611,10 +2733,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Data promo diskon berhasil diperbarui!\",\n  \"data\": {\n    \"id\": 4,\n    \"nama_diskon\": \"PROMOAGUSTUS2026\",\n    \"persentase_diskon\": 25,\n    \"tanggal_akhir\": \"2026-09-15T23:59:59.000Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:38:20.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"37. PUT /api/admin/diskon/{id} - Update Data Kode Promo & Periode Diskon - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "41. DELETE /api/admin/diskon/{id} - Hapus Kode Promo / Diskon",
+          "name": "39. DELETE /api/admin/diskon/{id} - Hapus Kode Promo / Diskon",
           "request": {
             "method": "DELETE",
             "header": [
@@ -2627,14 +2762,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2651,7 +2781,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "4",
+                  "value": "{{diskon_id}}",
                   "description": "ID unik promo diskon yang akan dihapus"
                 }
               ]
@@ -2672,16 +2802,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Kode promo berhasil dihapus!\",\n  \"data\": {\n    \"id\": 4,\n    \"deleted\": true\n  },\n  \"timestamp\": \"2026-08-27T08:38:25.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"38. DELETE /api/admin/diskon/{id} - Hapus Kode Promo / Diskon - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "11. Transaksi Reservasi & Check-In/Check-Out (Panel Admin)",
+      "name": "10. Transaksi Reservasi & Check-In/Check-Out (Panel Admin)",
       "description": "Monitoring reservasi masuk, konfirmasi persetujuan/pembatalan status, serta operasional check-in & check-out tamu di lokasi",
       "item": [
         {
-          "name": "42. GET /api/admin/reservasi - Lihat Seluruh Reservasi Coworking (Filter Lengkap)",
+          "name": "40. GET /api/admin/reservasi - Lihat Seluruh Reservasi Coworking (Filter Lengkap)",
           "request": {
             "method": "GET",
             "header": [
@@ -2694,14 +2837,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2758,10 +2896,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": [\n    {\n      \"id\": 12,\n      \"kode_booking\": \"BOOK-20260830-0012\",\n      \"tanggal_reservasi\": \"2026-08-30\",\n      \"jam_mulai\": \"09:00\",\n      \"jam_selesai\": \"12:00\",\n      \"durasi_jam\": 3,\n      \"total_harga_awal\": 60000,\n      \"potongan_diskon\": 12000,\n      \"total_bayar\": 48000,\n      \"status\": \"belum_dikonfirm\",\n      \"member\": {\n        \"id\": 6,\n        \"nama_member\": \"John Doe\",\n        \"telp\": \"081234567890\"\n      },\n      \"space\": {\n        \"id\": 1,\n        \"nama_space\": \"Personal Desk - Flexi 01\",\n        \"tipe\": \"desk\"\n      }\n    }\n  ],\n  \"timestamp\": \"2026-08-27T08:38:35.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"39. GET /api/admin/reservasi - Lihat Seluruh Reservasi Coworking (Filter Lengkap) - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "43. PATCH /api/admin/reservasi/{id}/status - Konfirmasi & Ubah Status Pemesanan",
+          "name": "41. PATCH /api/admin/reservasi/{id}/status - Konfirmasi & Ubah Status Pemesanan",
           "request": {
             "method": "PATCH",
             "header": [
@@ -2774,14 +2925,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "body": {
@@ -2803,7 +2949,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "12",
+                  "value": "{{reservasi_id}}",
                   "description": "ID reservasi pemesanan"
                 }
               ]
@@ -2824,10 +2970,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Status reservasi berhasil diperbarui menjadi disetujui\",\n  \"data\": {\n    \"id\": 12,\n    \"status\": \"disetujui\",\n    \"updated_at\": \"2026-08-27T08:38:40.000Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:38:40.050Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"40. PATCH /api/admin/reservasi/{id}/status - Konfirmasi & Ubah Status Pemesanan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "44. POST /api/admin/reservasi/{id}/check-in - Check-In Pelanggan (Status Aktif)",
+          "name": "42. POST /api/admin/reservasi/{id}/check-in - Check-In Pelanggan (Status Aktif)",
           "request": {
             "method": "POST",
             "header": [
@@ -2840,14 +2999,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2865,7 +3019,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "12",
+                  "value": "{{reservasi_id}}",
                   "description": "ID reservasi pemesanan"
                 }
               ]
@@ -2886,10 +3040,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Check-in member berhasil! Status reservasi aktif.\",\n  \"data\": {\n    \"id\": 12,\n    \"status\": \"aktif\",\n    \"check_in_time\": \"2026-08-30T09:02:15.000Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:38:45.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"41. POST /api/admin/reservasi/{id}/check-in - Check-In Pelanggan (Status Aktif) - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "45. POST /api/admin/reservasi/{id}/check-out - Check-Out Pelanggan (Status Selesai)",
+          "name": "43. POST /api/admin/reservasi/{id}/check-out - Check-Out Pelanggan (Status Selesai)",
           "request": {
             "method": "POST",
             "header": [
@@ -2902,14 +3069,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -2927,7 +3089,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "12",
+                  "value": "{{reservasi_id}}",
                   "description": "ID reservasi pemesanan"
                 }
               ]
@@ -2948,16 +3110,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Check-out member berhasil! Reservasi telah selesai.\",\n  \"data\": {\n    \"id\": 12,\n    \"status\": \"selesai\",\n    \"check_out_time\": \"2026-08-30T12:00:00.000Z\"\n  },\n  \"timestamp\": \"2026-08-27T08:38:50.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"42. POST /api/admin/reservasi/{id}/check-out - Check-Out Pelanggan (Status Selesai) - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "12. Rekapitulasi Laporan Pendapatan Bulanan (Panel Admin)",
+      "name": "11. Rekapitulasi Laporan Pendapatan Bulanan (Panel Admin)",
       "description": "Laporan pendapatan kotor, potongan diskon, realisasi pendapatan bersih, serta rincian per tipe space per bulan",
       "item": [
         {
-          "name": "46. GET /api/admin/reports/monthly - Rekapitulasi Estimasi & Realisasi Pendapatan Bulanan",
+          "name": "44. GET /api/admin/reports/monthly - Rekapitulasi Estimasi & Realisasi Pendapatan Bulanan",
           "request": {
             "method": "GET",
             "header": [
@@ -2970,14 +3145,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -3020,10 +3190,23 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"month\": 8,\n    \"year\": 2026,\n    \"total_transaksi\": 15,\n    \"total_jam_terpakai\": 48,\n    \"estimasi_pendapatan_kotor\": 1850000,\n    \"total_potongan_diskon\": 250000,\n    \"realisasi_pendapatan_bersih\": 1600000,\n    \"rincian_per_tipe_space\": [\n      {\n        \"tipe\": \"desk\",\n        \"label\": \"Personal Desk\",\n        \"total_booking\": 10,\n        \"total_jam\": 30,\n        \"total_pendapatan\": 600000\n      },\n      {\n        \"tipe\": \"meeting_room\",\n        \"label\": \"Meeting Room\",\n        \"total_booking\": 3,\n        \"total_jam\": 8,\n        \"total_pendapatan\": 750000\n      },\n      {\n        \"tipe\": \"private_office\",\n        \"label\": \"Private Office\",\n        \"total_booking\": 2,\n        \"total_jam\": 10,\n        \"total_pendapatan\": 250000\n      }\n    ]\n  },\n  \"timestamp\": \"2026-08-27T08:39:00.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"43. GET /api/admin/reports/monthly - Rekapitulasi Estimasi & Realisasi Pendapatan Bulanan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "47. GET /api/admin/reports/income - Alias Rekapitulasi Pendapatan Bulanan",
+          "name": "45. GET /api/admin/reports/income - Alias Rekapitulasi Pendapatan Bulanan",
           "request": {
             "method": "GET",
             "header": [
@@ -3036,14 +3219,9 @@
                 "value": "application/json"
               },
               {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
-              },
-              {
                 "key": "Authorization",
                 "value": "Bearer {{token_admin}}",
-                "description": "Token JWT Admin Space"
+                "description": "Token JWT Admin"
               }
             ],
             "url": {
@@ -3086,27 +3264,35 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 200,\n  \"message\": \"Berhasil memproses permintaan\",\n  \"data\": {\n    \"month\": 8,\n    \"year\": 2026,\n    \"realisasi_pendapatan_bersih\": 1600000\n  },\n  \"timestamp\": \"2026-08-27T08:39:05.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"44. GET /api/admin/reports/income - Alias Rekapitulasi Pendapatan Bulanan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         }
       ]
     },
     {
-      "name": "13. Upload Berkas & Gambar (Media)",
+      "name": "12. Upload Berkas & Gambar (Media)",
       "description": "Layanan upload berkas gambar (banner umum, foto ruangan space, dan foto profil member)",
       "item": [
         {
-          "name": "48. POST /api/upload/image - Upload Berkas Gambar Umum",
+          "name": "46. POST /api/upload/image - Upload Berkas Gambar Umum",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Accept",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               }
             ],
             "body": {
@@ -3147,21 +3333,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 201,\n  \"message\": \"File berhasil diupload\",\n  \"data\": {\n    \"filename\": \"1787799592972-544446318.jpeg\",\n    \"original_name\": \"banner.jpg\",\n    \"mimetype\": \"image/jpeg\",\n    \"size\": 1048576,\n    \"url\": \"http://localhost:3000/uploads/general/1787799592972-544446318.jpeg\"\n  },\n  \"timestamp\": \"2026-08-27T08:39:15.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"45. POST /api/upload/image - Upload Berkas Gambar Umum - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "49. POST /api/upload/spaces - Upload Foto Ruangan / Space",
+          "name": "47. POST /api/upload/spaces - Upload Foto Ruangan / Space",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Accept",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               },
               {
                 "key": "Authorization",
@@ -3207,21 +3401,29 @@
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 201,\n  \"message\": \"Foto space berhasil diupload\",\n  \"data\": {\n    \"filename\": \"meeting_room_alpha.jpg\",\n    \"url\": \"http://localhost:3000/uploads/spaces/meeting_room_alpha.jpg\"\n  },\n  \"timestamp\": \"2026-08-27T08:39:20.000Z\"\n}"
             }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"46. POST /api/upload/spaces - Upload Foto Ruangan / Space - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
           ]
         },
         {
-          "name": "50. POST /api/upload/members - Upload Foto Profil Member / Pelanggan",
+          "name": "48. POST /api/upload/members - Upload Foto Profil Member / Pelanggan",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Accept",
                 "value": "application/json"
-              },
-              {
-                "key": "x-maker-key",
-                "value": "{{makerKey}}",
-                "description": "Isolasi data multi-tenancy per siswa UKK"
               },
               {
                 "key": "Authorization",
@@ -3266,6 +3468,19 @@
                 }
               ],
               "body": "{\n  \"status\": true,\n  \"statusCode\": 201,\n  \"message\": \"Foto member berhasil diupload\",\n  \"data\": {\n    \"filename\": \"1787799592972-544446318.jpeg\",\n    \"url\": \"http://localhost:3000/uploads/members/1787799592972-544446318.jpeg\"\n  },\n  \"timestamp\": \"2026-08-27T08:39:25.000Z\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"47. POST /api/upload/members - Upload Foto Profil Member / Pelanggan - Status 200/201\", function () {",
+                  "    pm.expect([200, 201]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
             }
           ]
         }
