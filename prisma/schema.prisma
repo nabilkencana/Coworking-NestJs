@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+enum Role {
+  member
+  admin_space
+}
+
+enum SpaceType {
+  desk
+  meeting_room
+  private_office
+}
+
+enum ReservationStatus {
+  belum_dikonfirm
+  disetujui
+  aktif
+  selesai
+  dibatalkan
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  username   String      @unique
+  password   String
+  role       Role
+  member     Member?
+  spaceOwner SpaceOwner?
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Member {
+  id         Int         @id @default(autoincrement())
+  userId     Int         @unique @map("user_id")
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  namaMember String      @map("nama_member")
+  instansi   String
+  alamat     String      @db.Text
+  telp       String
+  foto       String?
+  reservasis Reservasi[]
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  @@map("members")
+}
+
+model SpaceOwner {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique @map("user_id")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  namaCoworking String   @map("nama_coworking")
+  namaPemilik   String   @map("nama_pemilik")
+  telp          String
+  alamat        String?  @db.Text
+  deskripsi     String?  @db.Text
+  spaces        Space[]
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("space_owners")
+}
+
+model Space {
+  id          Int         @id @default(autoincrement())
+  ownerId     Int         @map("owner_id")
+  owner       SpaceOwner  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  namaSpace   String      @map("nama_space")
+  hargaPerJam Int         @map("harga_per_jam")
+  tipe        SpaceType
+  kapasitas   Int
+  deskripsi   String      @db.Text
+  foto        String?
+  reservasis  Reservasi[]
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@index([ownerId])
+  @@map("spaces")
+}
+
+model Diskon {
+  id               Int         @id @default(autoincrement())
+  namaDiskon       String      @unique @map("nama_diskon")
+  persentaseDiskon Int         @map("persentase_diskon")
+  tanggalAwal      DateTime    @map("tanggal_awal")
+  tanggalAkhir     DateTime    @map("tanggal_akhir")
+  reservasis       Reservasi[]
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  @@map("diskons")
+}
+
+model Reservasi {
+  id               Int               @id @default(autoincrement())
+  kodeBooking      String            @unique @map("kode_booking")
+  memberId         Int               @map("member_id")
+  member           Member            @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  spaceId          Int               @map("space_id")
+  space            Space             @relation(fields: [spaceId], references: [id], onDelete: Restrict)
+  diskonId         Int?              @map("diskon_id")
+  diskon           Diskon?           @relation(fields: [diskonId], references: [id], onDelete: SetNull)
+  tanggalReservasi String            @map("tanggal_reservasi")
+  jamMulai         String            @map("jam_mulai")
+  jamSelesai       String            @map("jam_selesai")
+  durasiJam        Int               @map("durasi_jam")
+  hargaPerJam      Int               @map("harga_per_jam")
+  totalHargaAwal   Int               @map("total_harga_awal")
+  potonganDiskon   Int               @map("potongan_diskon")
+  totalBayar       Int               @map("total_bayar")
+  status           ReservationStatus @default(belum_dikonfirm)
+  checkInAt        DateTime?         @map("check_in_at")
+  checkOutAt       DateTime?         @map("check_out_at")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
+  @@index([spaceId, tanggalReservasi])
+  @@index([memberId])
+  @@index([status])
+  @@map("reservasis")
+}
