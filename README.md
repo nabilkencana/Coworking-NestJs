@@ -1,98 +1,283 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Smart Space Booking API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+**UKK RPL 2026/2027 — Paket B — SMK Telkom Malang**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+RESTful API untuk sistem reservasi *Coworking Space & Workstation* berbasis NestJS 11, Prisma ORM, dan Neon PostgreSQL.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📦 Tech Stack
 
-## Project setup
+| Layer | Teknologi |
+|---|---|
+| Framework | NestJS 11 + TypeScript |
+| ORM | Prisma 6 |
+| Database | Neon PostgreSQL (Cloud) |
+| Auth | JWT (Passport-JWT) |
+| Validasi | class-validator + class-transformer |
+| Upload | Multer (disk storage) |
+| Docs | Swagger UI (`/docs`) |
+| Testing | Jest + Supertest |
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## ⚙️ Persyaratan
+
+- Node.js >= 20
+- npm >= 10
+- Koneksi internet (Neon Cloud DB)
+
+---
+
+## 🚀 Instalasi
 
 ```bash
-# development
-$ npm run start
+# Clone repository
+git clone <url-repo>
+cd coworking-space
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Install dependencies
+npm install
 ```
 
-## Run tests
+---
+
+## 🔧 Konfigurasi Environment
+
+Buat file `.env` di root proyek:
+
+```env
+DATABASE_URL="postgresql://neondb_owner:<password>@<host>/neondb?sslmode=require&channel_binding=require"
+DIRECT_URL="postgresql://neondb_owner:<password>@<host>/neondb?sslmode=require&channel_binding=require"
+JWT_SECRET="your-super-secret-jwt-key"
+PORT=3000
+```
+
+---
+
+## 🗃️ Migrasi Database
 
 ```bash
-# unit tests
-$ npm run test
+# Jalankan migrasi Prisma
+npx prisma migrate deploy
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Atau buat migrasi baru (development)
+npx prisma migrate dev --name init_schema
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 🌱 Seeder (Data Awal)
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Jalankan seeder untuk data dummy (admin, member, space, diskon)
+npx prisma db seed
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**Akun Seeder:**
 
-## Resources
+| Role | Username | Password |
+|---|---|---|
+| Admin Coworking | `admin_space1` | `Admin123!` |
+| Admin Coworking | `admin_space2` | `Admin123!` |
+| Member | `johndoe` | `Secret123!` |
+| Member | `janesmith` | `Secret123!` |
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## ▶️ Menjalankan Server
 
-## Support
+```bash
+# Development (watch mode)
+npm run start:dev
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Production
+npm run build
+npm run start:prod
+```
 
-## Stay in touch
+Server berjalan di: **http://localhost:3000**
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## 📚 Dokumentasi API (Swagger)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Setelah server berjalan:
+
+- **Swagger UI**: http://localhost:3000/docs
+- **OpenAPI JSON**: http://localhost:3000/docs-json
+- **Root info**: http://localhost:3000/
+- **Health check**: http://localhost:3000/health
+
+---
+
+## 🧪 Pengujian
+
+```bash
+# Jalankan seluruh unit & e2e test
+npm test
+
+# Jalankan secara berurutan (lebih stabil untuk e2e)
+npx jest --runInBand
+
+# Test coverage
+npm run test:cov
+
+# Test satu modul saja
+npx jest tests/auth.spec.ts
+npx jest tests/admin.spec.ts
+```
+
+**Hasil pengujian: 66 tests / 9 suites — 100% PASS**
+
+---
+
+## 📡 Katalog Endpoint
+
+### 🔓 Publik (tanpa token)
+
+| Method | Path | Deskripsi |
+|---|---|---|
+| GET | `/` | Metadata API & daftar endpoint |
+| GET | `/health` | Health check server |
+| POST | `/api/auth/register` | Registrasi member baru |
+| POST | `/api/auth/login` | Login (member & admin), returns JWT |
+| GET | `/api/spaces` | Katalog semua ruangan aktif |
+| GET | `/api/spaces/types` | Daftar tipe space |
+| GET | `/api/spaces/availability` | Cek ketersediaan ruangan |
+| GET | `/api/spaces/:id` | Detail ruangan |
+| GET | `/api/diskon` | Daftar promo aktif |
+| GET | `/api/diskon/check?kode=XXX` | Cek promo by kode |
+| GET | `/api/diskon/:id` | Detail promo |
+
+### 🔐 Member (JWT required — role: `member`)
+
+| Method | Path | Deskripsi |
+|---|---|---|
+| GET | `/api/auth/profile` | Profil member |
+| PUT | `/api/auth/profile` | Update profil member |
+| POST | `/api/reservasi` | Buat reservasi baru |
+| GET | `/api/reservasi` | Daftar reservasi milik member |
+| GET | `/api/reservasi/:id` | Detail reservasi + QR payload |
+| DELETE | `/api/reservasi/:id` | Batalkan reservasi |
+
+### 👑 Admin (JWT required — role: `admin_space`)
+
+| Method | Path | Deskripsi |
+|---|---|---|
+| GET | `/api/admin/profile` | Profil admin coworking |
+| PUT | `/api/admin/profile` | Update profil admin |
+| POST | `/api/admin/members` | Tambah member baru |
+| GET | `/api/admin/members` | Daftar semua member |
+| GET | `/api/admin/members/:id` | Detail member |
+| PUT | `/api/admin/members/:id` | Update member |
+| DELETE | `/api/admin/members/:id` | Hapus member |
+| POST | `/api/admin/spaces` | Tambah space baru |
+| GET | `/api/admin/spaces` | Daftar space milik admin |
+| PUT | `/api/admin/spaces/:id` | Update space |
+| DELETE | `/api/admin/spaces/:id` | Hapus space |
+| POST | `/api/admin/diskon` | Tambah promo diskon |
+| GET | `/api/admin/diskon` | Daftar semua promo |
+| DELETE | `/api/admin/diskon/:id` | Hapus promo |
+| GET | `/api/admin/reservasi` | Daftar semua reservasi |
+| PATCH | `/api/admin/reservasi/:id/status` | Update status reservasi |
+| POST | `/api/admin/reservasi/:id/check-in` | Check-in pelanggan |
+| POST | `/api/admin/reservasi/:id/check-out` | Check-out pelanggan |
+| GET | `/api/admin/reports/monthly` | Laporan keuangan bulanan |
+| GET | `/api/admin/reports/income` | Alias laporan pendapatan |
+
+### 📁 Upload (public, no auth required)
+
+| Method | Path | Deskripsi |
+|---|---|---|
+| POST | `/api/upload/image` | Upload gambar umum → `/uploads/general/` |
+| POST | `/api/upload/spaces` | Upload foto space → `/uploads/spaces/` |
+| POST | `/api/upload/members` | Upload foto member → `/uploads/members/` |
+
+---
+
+## 📐 Format Response
+
+Semua response menggunakan format JSON seragam:
+
+**Success:**
+```json
+{
+  "status": true,
+  "statusCode": 200,
+  "message": "Berhasil",
+  "data": { ... },
+  "timestamp": "2026-09-18T14:00:00.000Z"
+}
+```
+
+**Error:**
+```json
+{
+  "status": false,
+  "statusCode": 400,
+  "message": "Validasi gagal",
+  "error": { ... },
+  "timestamp": "2026-09-18T14:00:00.000Z"
+}
+```
+
+---
+
+## 🗂️ Struktur Proyek
+
+```
+coworking-space/
+├── prisma/
+│   ├── schema.prisma          # Skema database Prisma
+│   └── seed.ts                # Data seeder
+├── src/
+│   ├── app.module.ts          # Root module
+│   ├── app.controller.ts      # GET / dan GET /health
+│   ├── main.ts                # Bootstrap, Swagger, static assets
+│   ├── common/
+│   │   ├── database/          # PrismaService & PrismaModule
+│   │   ├── decorators/        # @Roles, @CurrentUser, @Public
+│   │   ├── filters/           # HttpExceptionFilter (format error seragam)
+│   │   ├── guards/            # JwtAuthGuard, RolesGuard
+│   │   ├── interceptors/      # TransformInterceptor (format success seragam)
+│   │   └── utils/             # dateUtils, bookingUtils, pricingUtils
+│   └── modules/
+│       ├── auth/              # AuthModule: register, login, profile
+│       ├── spaces/            # SpacesModule: katalog, tipe, availability, detail
+│       ├── diskon/            # DiskonModule: promo aktif, cek kode, detail
+│       ├── reservasi/         # ReservasiModule: buat, list, detail, batal
+│       ├── admin/             # AdminModule: CRUD spaces/members/diskon, laporan
+│       └── upload/            # UploadModule: multer upload ke uploads/
+├── tests/                     # E2E test suites (9 suite, 66 tests)
+│   ├── auth.spec.ts
+│   ├── spaces.spec.ts
+│   ├── diskon.spec.ts
+│   ├── reservasi.spec.ts
+│   ├── admin.spec.ts
+│   ├── upload.spec.ts
+│   ├── root.spec.ts
+│   └── utils.spec.ts
+└── uploads/                   # Static files (general, spaces, members)
+```
+
+---
+
+## 🗄️ Skema Database
+
+Model utama:
+
+- **`users`** — akun pengguna (member & admin_space)
+- **`members`** — profil detail member (1:1 dengan users)
+- **`admin_coworkings`** — profil detail admin (1:1 dengan users)
+- **`spaces`** — data ruangan coworking
+- **`diskons`** — data promo diskon
+- **`reservasis`** — data reservasi (termasuk snapshot harga & status)
+
+Enum Status Reservasi: `belum_dikonfirm | dikonfirm | check_in | check_out | dibatalkan`
+
+---
+
+## 📝 Lisensi
+
+UNLICENSED — Proyek UKK RPL SMK Telkom Malang 2026/2027
