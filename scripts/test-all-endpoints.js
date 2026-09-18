@@ -3,8 +3,8 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3001;
-const BASE_URL = `http://localhost:${PORT}`;
+const PORT = process.env.PORT || 3000;
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 function request(method, urlPath, headers = {}, body = null) {
   return new Promise((resolve, reject) => {
