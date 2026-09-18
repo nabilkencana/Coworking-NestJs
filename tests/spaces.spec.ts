@@ -5,12 +5,13 @@ import { AppModule } from '../src/app.module';
 import { TransformInterceptor } from '../src/common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
 
+jest.setTimeout(30000);
+
 describe('SpacesModule (e2e)', () => {
   let app: INestApplication;
   let testSpaceId: number;
 
   beforeAll(async () => {
-    jest.setTimeout(30000);
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();

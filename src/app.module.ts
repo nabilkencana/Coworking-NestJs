@@ -7,6 +7,7 @@ import { SpacesModule } from './modules/spaces/spaces.module';
 import { DiskonModule } from './modules/diskon/diskon.module';
 import { ReservasiModule } from './modules/reservasi/reservasi.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AdminModule } from './modules/admin/admin.module';
     DiskonModule,
     ReservasiModule,
     AdminModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

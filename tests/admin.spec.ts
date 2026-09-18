@@ -4,6 +4,9 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TransformInterceptor } from '../src/common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
+import { PrismaService } from '../src/common/database/prisma.service';
+
+jest.setTimeout(30000);
 
 describe('AdminModule (e2e)', () => {
   let app: INestApplication;
@@ -15,7 +18,6 @@ describe('AdminModule (e2e)', () => {
   let testReservasiId: number;
 
   beforeAll(async () => {
-    jest.setTimeout(30000);
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -227,6 +229,14 @@ describe('AdminModule (e2e)', () => {
 
   describe('Admin Reservasi Operations & Reports', () => {
     beforeAll(async () => {
+      const prisma = app.get(PrismaService);
+      await prisma.reservasi.deleteMany({
+        where: {
+          spaceId: 1,
+          tanggalReservasi: '2026-12-05',
+        },
+      });
+
       // Create a test reservation by member
       const res = await request(app.getHttpServer())
         .post('/api/reservasi')

@@ -5,6 +5,8 @@ import { AppModule } from '../src/app.module';
 import { TransformInterceptor } from '../src/common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
 
+jest.setTimeout(30000);
+
 describe('AuthModule (e2e)', () => {
   let app: INestApplication;
 

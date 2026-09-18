@@ -4,6 +4,9 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TransformInterceptor } from '../src/common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
+import { PrismaService } from '../src/common/database/prisma.service';
+
+jest.setTimeout(30000);
 
 describe('ReservasiModule (e2e)', () => {
   let app: INestApplication;
@@ -11,7 +14,6 @@ describe('ReservasiModule (e2e)', () => {
   let createdReservasiId: number;
 
   beforeAll(async () => {
-    jest.setTimeout(30000);
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -21,6 +23,14 @@ describe('ReservasiModule (e2e)', () => {
     app.useGlobalInterceptors(new TransformInterceptor());
     app.useGlobalFilters(new HttpExceptionFilter());
     await app.init();
+
+    const prisma = app.get(PrismaService);
+    await prisma.reservasi.deleteMany({
+      where: {
+        spaceId: 2,
+        tanggalReservasi: '2026-11-10',
+      },
+    });
 
     // Login as member
     const loginRes = await request(app.getHttpServer())
