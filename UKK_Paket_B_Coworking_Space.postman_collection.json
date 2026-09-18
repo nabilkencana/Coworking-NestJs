@@ -3300,9 +3300,8 @@
               "formdata": [
                 {
                   "key": "file",
-                  "description": "Berkas file gambar (.jpg, .jpeg, .png, .webp)",
                   "type": "file",
-                  "src": []
+                  "src": "sample-upload.jpg"
                 }
               ]
             },
@@ -3340,9 +3339,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"45. POST /api/upload/image - Upload Berkas Gambar Umum - Status 200/201\", function () {",
+                  "pm.test(\"46. POST /api/upload/image - Upload Berkas Gambar Umum - Status 200/201 (Valid File)\", function () {",
                   "    pm.expect([200, 201]).to.include(pm.response.code);",
-                  "});"
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"object\");",
+                  "}"
                 ]
               }
             }
@@ -3368,9 +3371,8 @@
               "formdata": [
                 {
                   "key": "file",
-                  "description": "File Foto Ruangan / Meja Space (.jpg, .jpeg, .png)",
                   "type": "file",
-                  "src": []
+                  "src": "sample-upload.jpg"
                 }
               ]
             },
@@ -3408,9 +3410,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"46. POST /api/upload/spaces - Upload Foto Ruangan / Space - Status 200/201\", function () {",
+                  "pm.test(\"47. POST /api/upload/spaces - Upload Foto Ruangan / Space - Status 200/201 (Valid File)\", function () {",
                   "    pm.expect([200, 201]).to.include(pm.response.code);",
-                  "});"
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"object\");",
+                  "}"
                 ]
               }
             }
@@ -3436,9 +3442,8 @@
               "formdata": [
                 {
                   "key": "file",
-                  "description": "File Foto Profil Member (.jpg, .jpeg, .png)",
                   "type": "file",
-                  "src": []
+                  "src": "sample-upload.jpg"
                 }
               ]
             },
@@ -3476,9 +3481,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"47. POST /api/upload/members - Upload Foto Profil Member / Pelanggan - Status 200/201\", function () {",
+                  "pm.test(\"48. POST /api/upload/members - Upload Foto Profil Member / Pelanggan - Status 200/201 (Valid File)\", function () {",
                   "    pm.expect([200, 201]).to.include(pm.response.code);",
-                  "});"
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    var res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"object\");",
+                  "}"
                 ]
               }
             }
