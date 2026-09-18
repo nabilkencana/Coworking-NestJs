@@ -2,27 +2,39 @@
   "info": {
     "_postman_id": "ukk-paket-b-smart-space-booking-2026-2027",
     "name": "UKK Paket B - Coworking Space API (Smart Space Booking)",
-    "description": "Dokumentasi & API Collection resmi Uji Kompetensi Keahlian (UKK) RPL 2026/2027 - Paket B:\nAplikasi Reservasi Coworking Space & Workstation (Smart Space Booking).\n\nBackend: NestJS 11 + Prisma ORM + PostgreSQL (Neon) + JWT Auth + Swagger.\nBase URL: {{baseUrl}} (Default: http://localhost:3000)\n\nSemua endpoint terstruktur mandiri tanpa dependensi panitia (tidak memerlukan header x-maker-key).",
+    "description": "Dokumentasi & API Collection resmi Uji Kompetensi Keahlian (UKK) RPL 2026/2027 - Paket B:\nAplikasi Reservasi Coworking Space & Workstation (Smart Space Booking).\n\nBackend: NestJS 11 + Prisma ORM + PostgreSQL (Neon) + JWT Auth + Swagger.\nBase URL: {{base_url}} (Default: http://localhost:3000)\n\nSemua endpoint terstruktur mandiri tanpa dependensi panitia (tidak memerlukan header x-maker-key).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "Base URL server (snake_case standar)"
+    },
+    {
       "key": "baseUrl",
       "value": "http://localhost:3000",
       "type": "string",
-      "description": "Base URL server"
+      "description": "Base URL server (camelCase alias selaras)"
     },
     {
       "key": "token_member",
       "value": "",
       "type": "string",
-      "description": "JWT Bearer Member"
+      "description": "JWT Bearer Token Member"
     },
     {
       "key": "token_admin",
       "value": "",
       "type": "string",
-      "description": "JWT Bearer Admin"
+      "description": "JWT Bearer Token Admin Space"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT Bearer Token (alias token_member)"
     },
     {
       "key": "space_id",
@@ -31,38 +43,76 @@
       "description": "ID Ruangan / Meja Space"
     },
     {
+      "key": "id_space",
+      "value": "1",
+      "type": "string",
+      "description": "ID Ruangan / Meja Space (alias id_space)"
+    },
+    {
       "key": "member_id",
       "value": "1",
       "type": "string",
-      "description": "ID Member"
+      "description": "ID Member / Pelanggan"
+    },
+    {
+      "key": "id_member",
+      "value": "1",
+      "type": "string",
+      "description": "ID Member (alias id_member)"
     },
     {
       "key": "diskon_id",
       "value": "1",
       "type": "string",
-      "description": "ID Kode Promo"
+      "description": "ID Kode Promo / Diskon"
+    },
+    {
+      "key": "id_diskon",
+      "value": "1",
+      "type": "string",
+      "description": "ID Kode Promo (alias id_diskon)"
     },
     {
       "key": "reservasi_id",
       "value": "1",
       "type": "string",
-      "description": "ID Reservasi"
+      "description": "ID Transaksi Reservasi"
+    },
+    {
+      "key": "id_reservasi",
+      "value": "1",
+      "type": "string",
+      "description": "ID Transaksi Reservasi (alias id_reservasi)"
     },
     {
       "key": "cancel_reservasi_id",
       "value": "1",
       "type": "string",
-      "description": "ID Reservasi untuk Dibatalkan"
+      "description": "ID Reservasi Uji Pembatalan"
     },
     {
       "key": "booking_date",
       "value": "2028-05-15",
-      "type": "string"
+      "type": "string",
+      "description": "Tanggal Booking Dinamis"
     },
     {
       "key": "booking_hour",
       "value": "10:00",
-      "type": "string"
+      "type": "string",
+      "description": "Jam Booking Dinamis"
+    },
+    {
+      "key": "cancel_booking_date",
+      "value": "2028-06-20",
+      "type": "string",
+      "description": "Tanggal Booking Uji Pembatalan"
+    },
+    {
+      "key": "cancel_booking_hour",
+      "value": "14:00",
+      "type": "string",
+      "description": "Jam Booking Uji Pembatalan"
     }
   ],
   "item": [
@@ -85,9 +135,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/",
+              "raw": "{{base_url}}/",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": []
             },
@@ -137,9 +187,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/health",
+              "raw": "{{base_url}}/health",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "health"
@@ -197,7 +247,9 @@
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.access_token) {",
                   "        pm.collectionVariables.set(\"token_member\", res.data.access_token);",
+                  "        pm.collectionVariables.set(\"token\", res.data.access_token);",
                   "        if (pm.environment) pm.environment.set(\"token_member\", res.data.access_token);",
+                  "        if (pm.environment) pm.environment.set(\"token\", res.data.access_token);",
                   "    }",
                   "}"
                 ]
@@ -221,9 +273,9 @@
               "raw": "{\n  \"username\": \"member_{{$timestamp}}\",\n  \"password\": \"Secret123!\",\n  \"nama_member\": \"User Member Test\",\n  \"instansi\": \"SMK Telkom Malang\",\n  \"alamat\": \"Jl. Danau Ranau No. 1, Malang\",\n  \"telp\": \"081234567890\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/register/member",
+              "raw": "{{base_url}}/api/auth/register/member",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -302,9 +354,9 @@
               "raw": "{\n  \"username\": \"admin_{{$timestamp}}\",\n  \"password\": \"Admin123!\",\n  \"nama_coworking\": \"Moklet Hub Test {{$timestamp}}\",\n  \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n  \"telp\": \"081298765432\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/register/admin-space",
+              "raw": "{{base_url}}/api/auth/register/admin-space",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -346,11 +398,15 @@
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.access_token) {",
                   "        pm.collectionVariables.set(\"token_member\", res.data.access_token);",
+                  "        pm.collectionVariables.set(\"token\", res.data.access_token);",
                   "        if (pm.environment) pm.environment.set(\"token_member\", res.data.access_token);",
+                  "        if (pm.environment) pm.environment.set(\"token\", res.data.access_token);",
                   "    }",
                   "    if (res.data && res.data.member && res.data.member.id) {",
                   "        pm.collectionVariables.set(\"member_id\", String(res.data.member.id));",
+                  "        pm.collectionVariables.set(\"id_member\", String(res.data.member.id));",
                   "        if (pm.environment) pm.environment.set(\"member_id\", String(res.data.member.id));",
+                  "        if (pm.environment) pm.environment.set(\"id_member\", String(res.data.member.id));",
                   "    }",
                   "}"
                 ]
@@ -374,9 +430,9 @@
               "raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"Secret123!\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
+              "raw": "{{base_url}}/api/auth/login",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -454,9 +510,9 @@
               "raw": "{\n  \"username\": \"admin_space1\",\n  \"password\": \"Admin123!\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
+              "raw": "{{base_url}}/api/auth/login",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -515,9 +571,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/auth/profile",
+              "raw": "{{base_url}}/api/auth/profile",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -585,9 +641,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/auth/logout",
+              "raw": "{{base_url}}/api/auth/logout",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -634,9 +690,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/spaces/types",
+              "raw": "{{base_url}}/api/spaces/types",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -690,9 +746,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/spaces/availability?id_space={{space_id}}&tanggal=2029-01-01&jam_mulai=10:00&durasi_jam=2",
+              "raw": "{{base_url}}/api/spaces/availability?id_space={{space_id}}&tanggal=2029-01-01&jam_mulai=10:00&durasi_jam=2",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -777,9 +833,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/spaces?tipe=desk&search=Alpha",
+              "raw": "{{base_url}}/api/spaces?tipe=desk&search=Alpha",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -844,9 +900,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/spaces/:id",
+              "raw": "{{base_url}}/api/spaces/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -926,9 +982,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/diskon/active",
+              "raw": "{{base_url}}/api/diskon/active",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -986,9 +1042,9 @@
               "raw": "{\n  \"nama_diskon\": \"DISKONHEMAT20\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/diskon/check",
+              "raw": "{{base_url}}/api/diskon/check",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1055,9 +1111,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/diskon/:id",
+              "raw": "{{base_url}}/api/diskon/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1124,7 +1180,9 @@
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"reservasi_id\", String(res.data.id));",
+                  "        pm.collectionVariables.set(\"id_reservasi\", String(res.data.id));",
                   "        if (pm.environment) pm.environment.set(\"reservasi_id\", String(res.data.id));",
+                  "        if (pm.environment) pm.environment.set(\"id_reservasi\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -1172,9 +1230,9 @@
               "raw": "{\n  \"id_space\": 1,\n  \"tanggal_reservasi\": \"{{booking_date}}\",\n  \"jam_mulai\": \"{{booking_hour}}\",\n  \"durasi_jam\": 2,\n  \"id_diskon\": 1\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/reservasi",
+              "raw": "{{base_url}}/api/reservasi",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1232,9 +1290,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reservasi/my",
+              "raw": "{{base_url}}/api/reservasi/my",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1293,9 +1351,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reservasi/my/history?month=8&year=2026",
+              "raw": "{{base_url}}/api/reservasi/my/history?month=8&year=2026",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1367,9 +1425,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reservasi/:id/e-ticket",
+              "raw": "{{base_url}}/api/reservasi/:id/e-ticket",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1436,9 +1494,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reservasi/:id",
+              "raw": "{{base_url}}/api/reservasi/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1499,7 +1557,9 @@
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"cancel_reservasi_id\", String(res.data.id));",
+                  "        pm.collectionVariables.set(\"cancel_id_reservasi\", String(res.data.id));",
                   "        if (pm.environment) pm.environment.set(\"cancel_reservasi_id\", String(res.data.id));",
+                  "        if (pm.environment) pm.environment.set(\"cancel_id_reservasi\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -1547,9 +1607,9 @@
               "raw": "{\n  \"id_space\": 1,\n  \"tanggal_reservasi\": \"{{cancel_booking_date}}\",\n  \"jam_mulai\": \"{{cancel_booking_hour}}\",\n  \"durasi_jam\": 1\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/reservasi",
+              "raw": "{{base_url}}/api/reservasi",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1580,9 +1640,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/reservasi/:id/cancel",
+              "raw": "{{base_url}}/api/reservasi/:id/cancel",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1654,9 +1714,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/profile",
+              "raw": "{{base_url}}/api/admin/profile",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1719,9 +1779,9 @@
               "raw": "{\n  \"nama_coworking\": \"Moklet Hub Coworking Space (Updated)\",\n  \"nama_pemilik\": \"Ahmad Bidin, S.Kom\",\n  \"telp\": \"081298765432\",\n  \"alamat\": \"Jl. Danau Ranau No. 1, Sawojajar, Malang\",\n  \"deskripsi\": \"Coworking modern premium updated.\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/profile",
+              "raw": "{{base_url}}/api/admin/profile",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1786,9 +1846,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/members?search=Budi",
+              "raw": "{{base_url}}/api/admin/members?search=Budi",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1849,7 +1909,9 @@
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"member_id\", String(res.data.id));",
+                  "        pm.collectionVariables.set(\"id_member\", String(res.data.id));",
                   "        if (pm.environment) pm.environment.set(\"member_id\", String(res.data.id));",
+                  "        if (pm.environment) pm.environment.set(\"id_member\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -1878,9 +1940,9 @@
               "raw": "{\n  \"username\": \"member_adm_{{$timestamp}}\",\n  \"password\": \"Secret123!\",\n  \"nama_member\": \"Budi Raharjo\",\n  \"instansi\": \"SMK Telkom Malang\",\n  \"alamat\": \"Jl. Danau Ranau No. 1, Malang\",\n  \"telp\": \"085712345678\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/members",
+              "raw": "{{base_url}}/api/admin/members",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1926,9 +1988,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/members/:id",
+              "raw": "{{base_url}}/api/admin/members/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -1999,9 +2061,9 @@
               "raw": "{\n  \"nama_member\": \"John Doe, S.Kom\",\n  \"instansi\": \"PT Inovasi Digital\",\n  \"alamat\": \"Jl. Gatot Subroto No. 45, Jakarta\",\n  \"telp\": \"081234567890\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/members/:id",
+              "raw": "{{base_url}}/api/admin/members/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2068,9 +2130,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/members/:id",
+              "raw": "{{base_url}}/api/admin/members/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2143,9 +2205,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/spaces",
+              "raw": "{{base_url}}/api/admin/spaces",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2199,7 +2261,9 @@
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"space_id\", String(res.data.id));",
+                  "        pm.collectionVariables.set(\"id_space\", String(res.data.id));",
                   "        if (pm.environment) pm.environment.set(\"space_id\", String(res.data.id));",
+                  "        if (pm.environment) pm.environment.set(\"id_space\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -2228,9 +2292,9 @@
               "raw": "{\n  \"nama_space\": \"Personal Desk Alpha {{$timestamp}}\",\n  \"harga_per_jam\": 25000,\n  \"tipe\": \"desk\",\n  \"kapasitas\": 1,\n  \"deskripsi\": \"Meja kerja dengan colokan listrik dan WiFi 100Mbps.\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/spaces",
+              "raw": "{{base_url}}/api/admin/spaces",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2276,9 +2340,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/spaces/:id",
+              "raw": "{{base_url}}/api/admin/spaces/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2349,9 +2413,9 @@
               "raw": "{\n  \"nama_space\": \"Personal Desk Alpha 01 (Updated)\",\n  \"harga_per_jam\": 30000,\n  \"kapasitas\": 2,\n  \"deskripsi\": \"Fasilitas terupdate dengan monitor 27 inch 4K dan standing desk elektrik.\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/spaces/:id",
+              "raw": "{{base_url}}/api/admin/spaces/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2418,9 +2482,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/spaces/:id",
+              "raw": "{{base_url}}/api/admin/spaces/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2493,9 +2557,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/diskon",
+              "raw": "{{base_url}}/api/admin/diskon",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2549,7 +2613,9 @@
                   "    var res = pm.response.json();",
                   "    if (res.data && res.data.id) {",
                   "        pm.collectionVariables.set(\"diskon_id\", String(res.data.id));",
+                  "        pm.collectionVariables.set(\"id_diskon\", String(res.data.id));",
                   "        if (pm.environment) pm.environment.set(\"diskon_id\", String(res.data.id));",
+                  "        if (pm.environment) pm.environment.set(\"id_diskon\", String(res.data.id));",
                   "    }",
                   "}"
                 ]
@@ -2578,9 +2644,9 @@
               "raw": "{\n  \"nama_diskon\": \"PROMO_{{$timestamp}}\",\n  \"persentase_diskon\": 20,\n  \"tanggal_awal\": \"2027-01-01T00:00:00.000Z\",\n  \"tanggal_akhir\": \"2027-12-31T23:59:59.000Z\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/diskon",
+              "raw": "{{base_url}}/api/admin/diskon",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2626,9 +2692,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/diskon/:id",
+              "raw": "{{base_url}}/api/admin/diskon/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2699,9 +2765,9 @@
               "raw": "{\n  \"nama_diskon\": \"PROMO_{{$timestamp}}_UPDATED\",\n  \"persentase_diskon\": 25,\n  \"tanggal_akhir\": \"2027-12-31T23:59:59.000Z\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/diskon/:id",
+              "raw": "{{base_url}}/api/admin/diskon/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2768,9 +2834,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/diskon/:id",
+              "raw": "{{base_url}}/api/admin/diskon/:id",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2843,9 +2909,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reservasi?month=8&year=2026&status=belum_dikonfirm&id_space=1&tanggal=2026-08-30",
+              "raw": "{{base_url}}/api/admin/reservasi?month=8&year=2026&status=belum_dikonfirm&id_space=1&tanggal=2026-08-30",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -2935,9 +3001,9 @@
               "raw": "{\n  \"status\": \"disetujui\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reservasi/:id/status",
+              "raw": "{{base_url}}/api/admin/reservasi/:id/status",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -3005,9 +3071,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reservasi/:id/check-in",
+              "raw": "{{base_url}}/api/admin/reservasi/:id/check-in",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -3075,9 +3141,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reservasi/:id/check-out",
+              "raw": "{{base_url}}/api/admin/reservasi/:id/check-out",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -3151,9 +3217,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reports/monthly?month=8&year=2026",
+              "raw": "{{base_url}}/api/admin/reports/monthly?month=8&year=2026",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -3225,9 +3291,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/admin/reports/income?month=8&year=2026",
+              "raw": "{{base_url}}/api/admin/reports/income?month=8&year=2026",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -3306,9 +3372,9 @@
               ]
             },
             "url": {
-              "raw": "{{baseUrl}}/api/upload/image",
+              "raw": "{{base_url}}/api/upload/image",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -3377,9 +3443,9 @@
               ]
             },
             "url": {
-              "raw": "{{baseUrl}}/api/upload/spaces",
+              "raw": "{{base_url}}/api/upload/spaces",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",
@@ -3448,9 +3514,9 @@
               ]
             },
             "url": {
-              "raw": "{{baseUrl}}/api/upload/members",
+              "raw": "{{base_url}}/api/upload/members",
               "host": [
-                "{{baseUrl}}"
+                "{{base_url}}"
               ],
               "path": [
                 "api",

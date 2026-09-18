@@ -60,4 +60,5 @@ uploads/general/*
 uploads/spaces/*
 uploads/members/*
 !uploads/*/.gitkeep
-
+# MCP
+.playwright-mcp/
