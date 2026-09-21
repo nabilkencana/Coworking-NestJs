@@ -18,7 +18,7 @@ async function main() {
   const adminHashedPassword = await bcrypt.hash("Admin123!", 10);
   const adminUser = await prisma.user.create({
     data: {
-      username: "admin_space1",
+      username: "admin_demo",
       password: adminHashedPassword,
       role: Role.admin_space,
       spaceOwner: {
@@ -36,6 +36,23 @@ async function main() {
     },
   });
 
+  // Also create admin_space1 for standard UKK checks
+  await prisma.user.create({
+    data: {
+      username: "admin_space1",
+      password: adminHashedPassword,
+      role: Role.admin_space,
+      spaceOwner: {
+        create: {
+          namaCoworking: "Moklet Hub Coworking Space",
+          namaPemilik: "Ahmad Bidin, S.Kom",
+          telp: "081298765432",
+          alamat: "Jl. Danau Ranau No. 1, Sawojajar, Malang",
+          deskripsi: "Coworking space modern dengan internet gigabit.",
+        },
+      },
+    },
+  });
   const spaceOwnerId = adminUser.spaceOwner!.id;
 
   // 2. Create Spaces under Admin
@@ -114,6 +131,15 @@ async function main() {
       tanggalAkhir: new Date("2026-08-31T23:59:59.000Z"),
     },
   });
+  await prisma.diskon.create({
+    data: {
+      namaDiskon: "DISKONMEMBER20",
+      persentaseDiskon: 20,
+      tanggalAwal: new Date("2026-01-01T00:00:00.000Z"),
+      tanggalAkhir: new Date("2026-12-31T23:59:59.000Z"),
+    },
+  });
+
 
   // 4. Create Member Users & Profiles
   const memberHashedPassword = await bcrypt.hash("Secret123!", 10);
@@ -156,6 +182,24 @@ async function main() {
       member: true,
     },
   });
+  const memberJourneyPassword = await bcrypt.hash("Member123!", 10);
+  await prisma.user.create({
+    data: {
+      username: "budi.member",
+      password: memberJourneyPassword,
+      role: Role.member,
+      member: {
+        create: {
+          namaMember: "Budi Member",
+          instansi: "SMK Telkom Malang",
+          alamat: "Jl. Danau Ranau No. 1, Sawojajar, Malang",
+          telp: "085712345678",
+          foto: "budi.jpg",
+        },
+      },
+    },
+  });
+
 
   // 5. Create Sample Reservations
   await prisma.reservasi.create({

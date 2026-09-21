@@ -36,6 +36,9 @@ export class AdminService {
       nama_coworking: owner.namaCoworking,
       nama_pemilik: owner.namaPemilik,
       telp: owner.telp,
+      alamat: owner.alamat || 'Jl. Danau Ranau No. 1, Sawojajar, Malang',
+      deskripsi: owner.deskripsi || 'Coworking space modern dengan internet gigabit.',
+      updated_at: owner.updatedAt.toISOString(),
     };
   }
 
@@ -58,6 +61,9 @@ export class AdminService {
         nama_coworking: updated.namaCoworking,
         nama_pemilik: updated.namaPemilik,
         telp: updated.telp,
+        alamat: updated.alamat || '',
+        deskripsi: updated.deskripsi || '',
+        updated_at: updated.updatedAt.toISOString(),
       },
     };
   }
@@ -517,6 +523,10 @@ export class AdminService {
       potongan_diskon: r.potonganDiskon,
       total_bayar: r.totalBayar,
       status: r.status,
+      check_in_at: r.checkInAt ? r.checkInAt.toISOString() : null,
+      check_out_at: r.checkOutAt ? r.checkOutAt.toISOString() : null,
+      check_in_time: r.checkInAt ? r.checkInAt.toISOString() : null,
+      check_out_time: r.checkOutAt ? r.checkOutAt.toISOString() : null,
       member: {
         id: r.member.id,
         nama_member: r.member.namaMember,
@@ -605,6 +615,7 @@ export class AdminService {
       data: {
         id: updated.id,
         status: updated.status,
+        check_in_at: updated.checkInAt!.toISOString(),
         check_in_time: updated.checkInAt!.toISOString(),
       },
     };
@@ -639,10 +650,146 @@ export class AdminService {
       data: {
         id: updated.id,
         status: updated.status,
+        check_out_at: updated.checkOutAt!.toISOString(),
         check_out_time: updated.checkOutAt!.toISOString(),
       },
     };
   }
+  async verifyQr(user: { spaceOwner: { id: number } }, token: string) {
+    if (!token) {
+      throw new BadRequestException('Token QR wajib diisi!');
+    }
+
+    let reservasiId: number | undefined;
+    let bookingCode: string | undefined;
+
+    const match = token.match(/VERIFY-RESERVASI-(\d+)-(BOOK-[\w-]+)/);
+    if (match) {
+      reservasiId = parseInt(match[1], 10);
+      bookingCode = match[2];
+    } else if (token.startsWith('BOOK-')) {
+      bookingCode = token;
+    } else if (!isNaN(Number(token))) {
+      reservasiId = Number(token);
+    }
+
+    const where: Record<string, unknown> = {
+      space: { ownerId: user.spaceOwner.id },
+    };
+
+    if (reservasiId && bookingCode) {
+      where.OR = [{ id: reservasiId }, { kodeBooking: bookingCode }];
+    } else if (reservasiId) {
+      where.id = reservasiId;
+    } else if (bookingCode) {
+      where.kodeBooking = bookingCode;
+    } else {
+      where.kodeBooking = token;
+    }
+
+    const r = await this.prisma.reservasi.findFirst({
+      where,
+      include: {
+        member: true,
+        space: { include: { owner: true } },
+        diskon: true,
+      },
+    });
+
+    if (!r) {
+      throw new NotFoundException('Reservasi tidak ditemukan atau tidak valid untuk space Anda!');
+    }
+
+    if (r.status === ReservationStatus.dibatalkan) {
+      throw new BadRequestException('Reservasi telah dibatalkan!');
+    }
+
+    let updated = r;
+    if (r.status === ReservationStatus.disetujui || r.status === ReservationStatus.belum_dikonfirm) {
+      updated = await this.prisma.reservasi.update({
+        where: { id: r.id },
+        data: {
+          status: ReservationStatus.aktif,
+          checkInAt: new Date(),
+        },
+        include: {
+          member: true,
+          space: { include: { owner: true } },
+          diskon: true,
+        },
+      });
+    }
+
+    return {
+      message: 'Check-in member berhasil! Status reservasi aktif.',
+      data: {
+        id: updated.id,
+        kode_booking: updated.kodeBooking,
+        member_id: updated.memberId,
+        space_id: updated.spaceId,
+        diskon_id: updated.diskonId,
+        tanggal_reservasi: updated.tanggalReservasi,
+        jam_mulai: updated.jamMulai,
+        jam_selesai: updated.jamSelesai,
+        durasi_jam: updated.durasiJam,
+        harga_per_jam: updated.hargaPerJam,
+        total_harga_awal: updated.totalHargaAwal,
+        potongan_diskon: updated.potonganDiskon,
+        total_bayar: updated.totalBayar,
+        status: updated.status,
+        check_in_at: updated.checkInAt ? updated.checkInAt.toISOString() : new Date().toISOString(),
+        check_out_at: updated.checkOutAt ? updated.checkOutAt.toISOString() : null,
+        check_in_time: updated.checkInAt ? updated.checkInAt.toISOString() : new Date().toISOString(),
+        check_out_time: updated.checkOutAt ? updated.checkOutAt.toISOString() : null,
+        created_at: updated.createdAt.toISOString(),
+        updated_at: updated.updatedAt.toISOString(),
+        member: {
+          id: updated.member.id,
+          nama_member: updated.member.namaMember,
+          instansi: updated.member.instansi,
+          alamat: updated.member.alamat,
+          telp: updated.member.telp,
+          foto: updated.member.foto,
+        },
+        space: {
+          id: updated.space.id,
+          nama_space: updated.space.namaSpace,
+          tipe: updated.space.tipe,
+          harga_per_jam: updated.space.hargaPerJam,
+          kapasitas: updated.space.kapasitas,
+          deskripsi: updated.space.deskripsi,
+          foto: updated.space.foto,
+        },
+        diskon: updated.diskon
+          ? {
+              id: updated.diskon.id,
+              nama_diskon: updated.diskon.namaDiskon,
+              persentase_diskon: updated.diskon.persentaseDiskon,
+            }
+          : null,
+      },
+    };
+  }
+
+  async getPublicLocation() {
+    const owner = await this.prisma.spaceOwner.findFirst({
+      orderBy: { id: 'asc' },
+    });
+
+    if (!owner) {
+      throw new NotFoundException('Data lokasi coworking space tidak ditemukan!');
+    }
+
+    return {
+      id: owner.id,
+      nama_coworking: owner.namaCoworking,
+      nama_pemilik: owner.namaPemilik,
+      telp: owner.telp,
+      alamat: owner.alamat || 'Jl. Danau Ranau No. 1, Sawojajar, Malang',
+      deskripsi: owner.deskripsi,
+    };
+  }
+
 
   // ==================== REPORTS ====================
   async getMonthlyReport(user: any, query: QueryReportDto) {
@@ -707,13 +854,16 @@ export class AdminService {
 
     return {
       month,
+      bulan: month,
       year,
+      tahun: year,
       total_transaksi: totalTransaksi,
       total_jam_terpakai: totalJamTerpakai,
       estimasi_pendapatan_kotor: estimasiPendapatanKotor,
       total_potongan_diskon: totalPotonganDiskon,
       realisasi_pendapatan_bersih: realisasiPendapatanBersih,
       rincian_per_tipe_space: rincianPerTipeSpace,
+      rincian_per_tipe: rincianPerTipeSpace,
     };
   }
 
@@ -721,7 +871,9 @@ export class AdminService {
     const report = await this.getMonthlyReport(user, query);
     return {
       month: report.month,
+      bulan: report.month,
       year: report.year,
+      tahun: report.year,
       realisasi_pendapatan_bersih: report.realisasi_pendapatan_bersih,
     };
   }

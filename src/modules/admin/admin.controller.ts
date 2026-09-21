@@ -194,6 +194,13 @@ export class AdminController {
   checkOut(@CurrentUser() user: any, @Param('id', ParseIntPipe) id: number) {
     return this.adminService.checkOut(user, id);
   }
+  @Post('reservasi/verify-qr')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verifikasi Token QR & Check-In Instan (Admin)' })
+  verifyQr(@CurrentUser() user: any, @Body('token') token: string) {
+    return this.adminService.verifyQr(user, token);
+  }
+
 
   // ==================== REPORTS ====================
   @Get('reports/monthly')

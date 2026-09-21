@@ -110,42 +110,59 @@ export class SpacesService {
 
     const baseUrl = this.getBaseUrl();
 
-    return spaces.map((space) => ({
-      id: space.id,
-      nama_space: space.namaSpace,
-      harga_per_jam: space.hargaPerJam,
-      tipe: space.tipe,
-      kapasitas: space.kapasitas,
-      foto: space.foto,
-      deskripsi: space.deskripsi,
-      id_owner: space.ownerId,
-      owner: {
-        id: space.owner.id,
-        nama_coworking: space.owner.namaCoworking,
-        nama_pemilik: space.owner.namaPemilik,
-        telp: space.owner.telp,
-      },
-      foto_url: space.foto ? `${baseUrl}/uploads/spaces/${space.foto}` : null,
-    }));
+    return spaces.map((space) => {
+      const slug = space.namaSpace.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      return {
+        id: space.id,
+        nama_space: space.namaSpace,
+        slug,
+        harga_per_jam: space.hargaPerJam,
+        tipe: space.tipe,
+        kapasitas: space.kapasitas,
+        foto: space.foto,
+        deskripsi: space.deskripsi,
+        id_owner: space.ownerId,
+        owner: {
+          id: space.owner.id,
+          nama_coworking: space.owner.namaCoworking,
+          nama_pemilik: space.owner.namaPemilik,
+          telp: space.owner.telp,
+        },
+        foto_url: space.foto ? `${baseUrl}/uploads/spaces/${space.foto}` : null,
+      };
+    });
   }
 
   async findById(id: number) {
-    const space = await this.prisma.space.findUnique({
-      where: { id },
-      include: {
-        owner: true,
-      },
-    });
+    return this.findByIdOrSlug(id);
+  }
+
+  async findByIdOrSlug(idOrSlug: string | number) {
+    const isNumeric = !isNaN(Number(idOrSlug));
+    const space = isNumeric
+      ? await this.prisma.space.findUnique({
+          where: { id: Number(idOrSlug) },
+          include: { owner: true },
+        })
+      : (await this.prisma.space.findMany({ include: { owner: true } })).find((s) => {
+          const sSlug = s.namaSpace
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+          return sSlug === String(idOrSlug).toLowerCase();
+        }) ?? null;
 
     if (!space) {
-      throw new NotFoundException('Space dengan ID tersebut tidak ditemukan!');
+      throw new NotFoundException('Space dengan ID atau slug tersebut tidak ditemukan!');
     }
 
     const baseUrl = this.getBaseUrl();
+    const slug = space.namaSpace.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
     return {
       id: space.id,
       nama_space: space.namaSpace,
+      slug,
       harga_per_jam: space.hargaPerJam,
       tipe: space.tipe,
       kapasitas: space.kapasitas,

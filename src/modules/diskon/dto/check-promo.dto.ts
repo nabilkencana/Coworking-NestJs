@@ -1,9 +1,24 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CheckPromoDto {
-  @ApiProperty({ example: 'DISKONHEMAT20' })
+  @ApiPropertyOptional({ example: 'DISKONHEMAT20' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty({ message: 'Nama diskon / kode promo wajib diisi' })
-  nama_diskon: string;
+  nama_diskon?: string;
+
+  @ApiPropertyOptional({ example: 'DISKONHEMAT20' })
+  @IsOptional()
+  @IsString()
+  kode_promo?: string;
+
+  @ApiPropertyOptional({ example: 'DISKONHEMAT20' })
+  @IsOptional()
+  @IsString()
+  kode?: string;
+
+  @ApiPropertyOptional({ example: 60000 })
+  @IsOptional()
+  @IsNumber()
+  subtotal?: number;
 }

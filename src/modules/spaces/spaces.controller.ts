@@ -40,8 +40,8 @@ export class SpacesController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Lihat Detail Space Coworking Berdasarkan ID' })
-  findById(@Param('id', ParseIntPipe) id: number) {
-    return this.spacesService.findById(id);
+  @ApiOperation({ summary: 'Lihat Detail Space Coworking Berdasarkan ID atau Slug' })
+  findById(@Param('id') idOrSlug: string) {
+    return this.spacesService.findByIdOrSlug(idOrSlug);
   }
 }

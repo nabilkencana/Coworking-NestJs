@@ -14,10 +14,17 @@ export class AppController {
     return this.appService.getInfo();
   }
 
-  @Get('health')
+  @Get(['health', 'api/health'])
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Health Check Status Server' })
   getHealth() {
     return this.appService.getHealth();
+  }
+
+  @Get(['location/profile', 'api/location/profile'])
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Data Profil Publik Coworking Space' })
+  getLocationProfile() {
+    return this.appService.getLocationProfile();
   }
 }
